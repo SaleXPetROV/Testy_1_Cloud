@@ -1,0 +1,11 @@
+[Unit]
+Description=GRAM City hourly backup (git push + encrypted database copy)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/gram-backup.env
+ExecStart=/opt/gram-city/deploy/backup/hourly_backup.sh
+Nice=10
+IOSchedulingClass=idle

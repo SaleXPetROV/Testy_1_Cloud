@@ -1,0 +1,25 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GRAM City — спрайты зданий</title>
+<style>
+body{margin:0;background:#0b0e16;color:#dff7ff;font-family:Segoe UI,Roboto,Arial,sans-serif;padding:16px}
+h1{font-size:20px;margin:0 0 4px}.sub{color:#8aa3b5;font-size:13px;margin-bottom:16px}
+.row{display:grid;grid-template-columns:180px repeat(3,1fr);gap:10px;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,.06)}
+.meta b{display:block;font-size:15px}.meta span{font-size:12px;color:#8aa3b5}
+.t1{color:#00f0ff}.t2{color:#b36bff}.t3{color:#ffd84d}
+figure{margin:0;text-align:center;background:radial-gradient(circle at 50% 70%,#141b2b,#0b0e16 70%);border-radius:12px;padding:6px}
+figure img{width:100%;max-width:200px;height:auto}
+figcaption{font-size:11px;color:#8aa3b5}
+.head{font-size:12px;color:#8aa3b5;text-transform:uppercase;letter-spacing:1px}
+@media (max-width:640px){.row{grid-template-columns:1fr 1fr 1fr}.meta{grid-column:1/-1}.head .x{display:none}}
+</style></head><body>
+<h1>Спрайты зданий новой карты</h1><div class="sub" id="sub"></div>
+<div class="row head"><span class="x">Здание</span><span>Стадия 1 · ур. 0–3</span><span>Стадия 2 · ур. 4–6</span><span>Стадия 3 · ур. 7–10</span></div>
+<div id="list"></div>
+<script>
+fetch('manifest.json').then(r=>r.json()).then(m=>{
+  const types=Object.entries(m.types).sort((a,b)=>a[1].tier-b[1].tier||a[1].footprint.localeCompare(b[1].footprint));
+  document.getElementById('sub').textContent=`${types.length} типов × 3 стадии = ${types.length*3} спрайтов`;
+  document.getElementById('list').innerHTML=types.map(([k,t])=>`<div class="row"><div class="meta"><b class="t${t.tier}">${t.name_ru}</b><span>${k} · тир ${t.tier} · участок ${t.footprint}</span></div>`+
+    [1,2,3].map(s=>`<figure><img src="${t.files[s]}" loading="lazy" alt="${t.name_ru} ${s}"><figcaption>stage${s}</figcaption></figure>`).join('')+`</div>`).join('');
+}).catch(()=>{document.getElementById('sub').textContent='Откройте через локальный сервер (python -m http.server), чтобы прочитать manifest.json';});
+</script></body></html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <meta name="theme-color" content="#05060A" />
+        <meta name="description" content="Gram City is a Telegram Mini App economic strategy game. Build your digital city, run virtual businesses and trade with other players. A game — not a financial service." />
+        <meta name="keywords" content="Gram City, Telegram Mini App, city building game, economic strategy, web3 game" />
+        <meta name="author" content="Gram City" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://gramcity.games/" />
+
+        <!-- Open Graph / social preview (helps establish site legitimacy) -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Gram City" />
+        <meta property="og:title" content="Gram City — Telegram Mini App Game" />
+        <meta property="og:description" content="Build your digital city, run virtual businesses and trade with other players in this Telegram Mini App strategy game." />
+        <meta property="og:url" content="https://gramcity.games/" />
+        <meta property="og:image" content="https://gramcity.games/favicon.png" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Gram City — Telegram Mini App Game" />
+        <meta name="twitter:description" content="Build your digital city and trade with other players in this Telegram Mini App strategy game." />
+
+        <link rel="icon" type="image/png" href="%PUBLIC_URL%/favicon.png?v=2" />
+        <link rel="shortcut icon" type="image/png" href="%PUBLIC_URL%/favicon.png?v=2" />
+        <link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon.png?v=2" />
+        <!-- Preload critical fonts (latin subsets) for fastest first paint -->
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="%PUBLIC_URL%/fonts/LDI2apCSOBg7S-QT7pb0EPOreec.woff2" />
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="%PUBLIC_URL%/fonts/LDI2apCSOBg7S-QT7pa8FvOreec.woff2" />
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="%PUBLIC_URL%/fonts/Yq6W-LOTXCb04q32xlpwu8Zf.woff2" />
+        <!-- Local font-face declarations (served statically, no webpack cost) -->
+        <link rel="stylesheet" href="%PUBLIC_URL%/fonts.css" />
+        <title>Gram City — Telegram Mini App Game</title>
+        
+        <!-- Telegram Mini App SDK.
+             NOTE: We intentionally do NOT pin an SRI `integrity` hash here.
+             Telegram ships updates to telegram-web-app.js periodically, and a
+             stale hash makes the browser BLOCK the script entirely — which
+             silently disables the whole Mini App integration (window.Telegram
+             never loads, so the safe-area / 56px top offset, BackButton, haptics
+             etc. all break). `crossorigin="anonymous"` is kept so the script is
+             fetched in CORS mode (Telegram's CDN returns ACAO: *).
+        -->
+        <script
+            src="https://telegram.org/js/telegram-web-app.js"
+            crossorigin="anonymous"
+        ></script>
+        
+        <!-- Prevent wallet extension conflicts -->
+        <script>
+            // Freeze ethereum property to prevent extension conflicts
+            (function() {
+                try {
+                    if (typeof window.ethereum !== 'undefined') {
+                        Object.defineProperty(window, 'ethereum', {
+                            configurable: false,
+                            writable: false,
+                            value: window.ethereum
+                        });
+                    }
+                } catch(e) {
+                    console.warn('Ethereum property protection skipped:', e.message);
+                }
+                
+                // Telegram WebApp init — full bootstrap is done in
+                // hooks/useTelegramWebApp.js. We only call .ready() here to
+                // signal the client immediately, before React mounts.
+                if (window.Telegram && window.Telegram.WebApp) {
+                    try { window.Telegram.WebApp.ready(); } catch(e) {}
+                }
+            })();
+        </script>
+
+        <!-- Meta Pixel: intentionally NOT loaded here.
+             To keep the cold start free of any third-party request before the
+             user interacts (Safari fraud-scanner heuristic), the pixel is loaded
+             lazily on the first user gesture from src/lib/loadPixel.js. -->
+
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root">
+            <!-- Pre-React splash matching the in-app GRAM CITY preloader:
+                 spinner ABOVE the neon title, white progress line + % BELOW.
+                 React replaces this on mount and continues the percentage from
+                 where this left off (window.__gcBootPct), so there is no
+                 flicker/reset and no reload/error on a slow connection. -->
+            <div id="boot-splash" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#05060A;background-image:radial-gradient(120% 80% at 50% -10%, rgba(0,240,255,0.10) 0%, rgba(5,6,10,0) 60%),radial-gradient(90% 60% at 50% 110%, rgba(0,128,255,0.08) 0%, rgba(5,6,10,0) 55%);font-family:'Unbounded',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:26px;width:min(340px,82vw);padding:24px;">
+                    <div style="width:58px;height:58px;border-radius:50%;border:3px solid rgba(0,240,255,0.18);border-top-color:#00F0FF;box-shadow:0 0 22px rgba(0,240,255,0.35);animation:bootspin 0.9s linear infinite;"></div>
+                    <div style="font-weight:800;font-size:clamp(28px,8vw,44px);letter-spacing:0.06em;text-transform:uppercase;color:#eafcff;text-shadow:0 0 6px rgba(0,240,255,0.95),0 0 14px rgba(0,240,255,0.75),0 0 30px rgba(0,240,255,0.55),0 0 54px rgba(0,240,255,0.4);white-space:nowrap;">GRAM CITY</div>
+                    <div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;">
+                        <div style="width:100%;height:4px;border-radius:999px;background:rgba(255,255,255,0.14);overflow:hidden;">
+                            <div id="boot-splash-fill" style="height:100%;width:0%;border-radius:999px;background:#fff;box-shadow:0 0 10px rgba(255,255,255,0.65);transition:width 0.25s ease-out;"></div>
+                        </div>
+                        <div id="boot-splash-pct" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;letter-spacing:0.12em;color:#fff;">0%</div>
+                    </div>
+                </div>
+            </div>
+            <style>@keyframes bootspin{to{transform:rotate(360deg)}}</style>
+        </div>
+        <script>
+            // Animate the pre-React percentage up to ~92% while the JS bundle
+            // downloads/parses. We deliberately do NOT show an error or reload
+            // the page if it is slow — the loader simply keeps going until the
+            // app is ready (React then continues from window.__gcBootPct).
+            (function () {
+                window.__gcBootPct = 0;
+                var p = 0;
+                var iv = setInterval(function () {
+                    var splash = document.getElementById('boot-splash');
+                    if (!splash || !document.body.contains(splash)) { clearInterval(iv); return; }
+                    if (p < 88) {
+                        p += Math.max(0.4, (88 - p) * 0.045);
+                    } else if (p < 99) {
+                        p += Math.max(0.03, (99 - p) * 0.02);
+                        if (p > 99) p = 99;
+                    }
+                    window.__gcBootPct = p;
+                    var fill = document.getElementById('boot-splash-fill');
+                    var pct = document.getElementById('boot-splash-pct');
+                    if (fill) fill.style.width = p + '%';
+                    if (pct) pct.textContent = Math.round(p) + '%';
+                }, 80);
+            })();
+        </script>
+    </body>
+</html>

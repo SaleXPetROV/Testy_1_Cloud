@@ -1,0 +1,23 @@
+{
+  "summary": "Frontend-only regression test for the new business-art overlap fix on /my-businesses. Verified at 360x600, 360x640, 390x680, 375x667 and 414x896 that the business art image (img.biz-skin-img) does NOT overlap the BIO FARM title above nor the Idle status badge below, page does not scroll (scrollHeight == clientHeight), and bottom-nav plus all cards/buttons remain fully visible. Also verified the ACTIVE BUFFS banner is NOT rendered on the main /my-businesses page and IS rendered inside the Business details modal (admin user with neuro_core:2 -> 'System Overclock' buff visible with data-testid='active-buffs-banner').",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "MyBusinessesPage.jsx is large; consider splitting the details modal, action buttons and card widgets into sub-components for maintainability.",
+    "WebSocket to /api/ws/<id> is closing before establishing (console warnings) — not blocking, but worth investigating on the backend side."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (skipped)", "frontend": "100%"},
+  "test_credentials": "Admin sanyanazarov212@gmail.com / Qetuyrwioo, Regular testuser@example.com / Test1234! — both worked via POST /api/auth/login (returns key 'token').",
+  "seed_data_creation": "None; used existing seeded bio_farm business and neuro_core:2 resource on admin account.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Measurements per viewport (title.bottom / img.top / img.bottom / status.top): 360x600 -> 171.25/183.25/252.98/261 (gap ~12/8px). 360x640 -> 173/185.83/290.81/299.63. 390x680 -> 176.5/190.09/328.61/338.22. 375x667 -> 175.09/188.42/316.34/325.69. 414x896 -> 187.59/280.80/460.80/550. No vertical intersections; docScrollHeight equals clientHeight on every viewport. Bottom-nav bottom == viewport height. Buffs banner test uses admin creds because testuser has no active buff resources; endpoint is /api/resource-buffs/available (NOT /api/resources/buffs). Login response returns {'token', 'type', 'user'} — key is 'token' not 'access_token'.",
+  "rca of the issue": "No bug reproduced. Overlap fix (max-height: min(100%, <vh cap>) on .biz-skin-img combined with flex-1/min-h-0 parent) works across all requested viewports."
+}

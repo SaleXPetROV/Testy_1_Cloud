@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GRAM City — карта районов (478 бизнесов)</title>
+<style>
+  :root {
+    --bg: #05060a; --panel: rgba(10, 14, 24, 0.94); --line: rgba(0, 240, 255, 0.25);
+    --cyan: #00f0ff; --magenta: #ff2bd6; --yellow: #ffd84d; --green: #39ff88; --text: #dff7ff; --muted: #8aa3b5;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: "Segoe UI", Roboto, Arial, sans-serif; overflow: hidden; }
+  #map { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+  #map.dragging { cursor: grabbing; }
+
+  /* top bar: district buttons + admin toggle */
+  #topbar { position: fixed; top: 0; left: 0; right: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 10px; background: linear-gradient(180deg, rgba(5,6,10,.95), rgba(5,6,10,0)); z-index: 5; pointer-events: none; }
+  #topbar > * { pointer-events: auto; }
+  .title { font-weight: 900; letter-spacing: 1px; margin-right: 6px; text-shadow: 0 0 12px rgba(0,240,255,.6); }
+  .btn { border: 1px solid var(--line); background: rgba(10,14,24,.85); color: var(--text); padding: 8px 12px; border-radius: 10px;
+    font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: var(--cyan); }
+  .btn.active { background: rgba(0,240,255,.15); border-color: var(--cyan); color: var(--cyan); }
+  .btn.locked { opacity: .55; }
+  .btn .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  #adminToggle { margin-left: auto; border-color: rgba(255,43,214,.5); color: #ffb3f0; }
+
+  /* admin panel (slides in from the right) */
+  #admin { position: fixed; top: 0; right: 0; bottom: 0; width: min(360px, 92vw); background: var(--panel); border-left: 1px solid var(--line);
+    transform: translateX(105%); transition: transform .3s ease; z-index: 10; overflow-y: auto;
+    padding: calc(14px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px)); }
+  #admin.open { transform: none; }
+  #admin h2 { margin: 0 0 4px; font-size: 18px; color: #ffb3f0; }
+  #admin h3 { margin: 18px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+  .row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; margin-bottom: 8px; }
+  .row .name { flex: 1; font-weight: 700; font-size: 14px; }
+  .row small { color: var(--muted); font-size: 11px; display: block; font-weight: 500; }
+  .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; inset: 0; background: #2a3242; border-radius: 24px; cursor: pointer; transition: .2s; }
+  .slider::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .2s; }
+  .switch input:checked + .slider { background: var(--green); }
+  .switch input:checked + .slider::before { transform: translateX(20px); }
+  select, input[type=number] { background: #0b111c; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; font-size: 13px; }
+  input[type=number] { width: 70px; }
+  input[type=range] { flex: 1; accent-color: var(--cyan); }
+  .closeAdmin { float: right; }
+
+  /* bottom legend / counter */
+  #legend { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(0deg, rgba(5,6,10,.96), rgba(5,6,10,0)); font-size: 13px; text-align: center; pointer-events: none; }
+  #counter { font-weight: 800; letter-spacing: .3px; }
+  #counter .ok { color: var(--green); } #counter .bad { color: #ff5d5d; }
+  .keys { margin-top: 6px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; color: var(--muted); font-size: 12px; }
+  .keys span::before { content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; background: var(--c); box-shadow: 0 0 6px var(--c); }
+
+  #tip { position: fixed; z-index: 8; pointer-events: none; padding: 8px 10px; border-radius: 10px; background: rgba(8,12,20,.95);
+    border: 1px solid var(--line); font-size: 12px; line-height: 1.45; display: none; max-width: 240px; }
+  #tip b { color: var(--cyan); }
+  #err { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: #3a0d14; color: #ffd1d1; border: 1px solid #ff5d5d;
+    padding: 10px 14px; border-radius: 10px; z-index: 20; display: none; font-size: 13px; }
+</style>
+</head>
+<body>
+<canvas id="map"></canvas>
+
+<div id="topbar">
+  <span class="title">GRAM CITY · РАЙОНЫ</span>
+  <button class="btn" data-fly="0">Весь город</button>
+  <span id="districtButtons"></span>
+  <button class="btn" id="adminToggle">⚙ Админ-панель</button>
+</div>
+
+<aside id="admin">
+  <button class="btn closeAdmin" id="adminClose">✕</button>
+  <h2>Админ-панель</h2>
+  <div style="color:var(--muted);font-size:12px">Открытие районов, фильтр и число открытых бизнесов</div>
+
+  <h3>Районы</h3>
+  <div id="adminDistricts"></div>
+
+  <h3>Фильтр отображения</h3>
+  <div class="row">
+    <span class="name">Показать</span>
+    <select id="filter">
+      <option value="all">Все здания и парки</option>
+      <option value="3x3">Только 3x3 (мегаструктуры)</option>
+      <option value="2x2">Только 2x2</option>
+      <option value="1x2">Только 1x2</option>
+      <option value="1x1">Только 1x1</option>
+      <option value="park">Только парки</option>
+    </select>
+  </div>
+  <div class="row">
+    <span class="name">Подписи размеров<small>на многоклеточных зданиях</small></span>
+    <label class="switch"><input type="checkbox" id="showLabels" checked><span class="slider"></span></label>
+  </div>
+
+  <h3>Открытые бизнесы в районах</h3>
+  <div id="adminActive"></div>
+  <button class="btn" id="resetAdmin" style="width:100%;margin-top:6px">Сбросить настройки</button>
+</aside>
+
+<div id="legend">
+  <div id="counter"></div>
+  <div class="keys">
+    <span style="--c:#ff2bd6">3x3 — мегаструктура</span>
+    <span style="--c:#00f0ff">2x2 / 1x2</span>
+    <span style="--c:#ffd84d">1x1</span>
+    <span style="--c:#39ff88">парк / декор</span>
+    <span style="--c:#3a4258">дорога</span>
+  </div>
+</div>
+<div id="tip"></div>
+<div id="err"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   GRAM City — 2D district map
+   • Rhombus-shaped city: central diamond District 1 (Core) and three
+     120° sectors around it: 2 North, 3 West, 4 East.
+   • Roads: a grid every ROAD_STEP cells through the centre + roads on
+     every district border, so a building never crosses a road or a border.
+   • Exact quotas per district (478 businesses in total). Placement is a
+     deterministic greedy packer: big buildings first, near the district
+     centre, packed tightly against roads/neighbours; then the spare cells
+     become small parks spread evenly over the district (farthest-point
+     sampling), and every other free cell gets a 1x1 building.
+   ===================================================================== */
+
+const R = 27;                 // rhombus "radius" in cells
+const CORE_R = 13;            // radius of the central diamond (District 1)
+const ROAD_STEP = 7;          // a road every 7 cells (blocks of 6x6 buildable cells)
+const N = 2 * R + 1;          // grid size (N x N)
+const C = R;                  // centre cell
+const CELL = 22;              // world pixels per cell
+
+const DISTRICTS = [
+  { id: 1, key: 'core',  name: 'Район 1 · Central Core', short: 'Район 1', color: '#ff2bd6',
+    quota: { '3x3': 7, '2x2': 8, '1x2': 6, '1x1': 100 } },
+  { id: 2, key: 'north', name: 'Район 2 · North Hub',    short: 'Район 2', color: '#00f0ff',
+    quota: { '3x3': 6, '2x2': 8, '1x2': 6, '1x1': 99 } },
+  { id: 3, key: 'west',  name: 'Район 3 · West District', short: 'Район 3', color: '#ffd84d',
+    quota: { '3x3': 6, '2x2': 8, '1x2': 6, '1x1': 99 } },
+  { id: 4, key: 'east',  name: 'Район 4 · East District', short: 'Район 4', color: '#39ff88',
+    quota: { '3x3': 6, '2x2': 8, '1x2': 6, '1x1': 99 } },
+];
+const TOTAL_EXPECTED = { all: 478, '3x3': 25, '2x2': 32, '1x2': 24, '1x1': 397 };
+const TYPE_COLOR = { '3x3': '#ff2bd6', '2x2': '#00f0ff', '1x2': '#00f0ff', '1x1': '#ffd84d', park: '#39ff88' };
+
+/* ---------- deterministic RNG (same map every time) ---------- */
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rand = mulberry32(20261005);
+
+/* ---------- 1. terrain: land, districts, roads ---------- */
+const isLand = (x, y) => Math.abs(x - C) + Math.abs(y - C) <= R;
+
+function districtOf(x, y) {
+  if (!isLand(x, y)) return 0;
+  const dx = x - C, dy = y - C;
+  if (Math.abs(dx) + Math.abs(dy) <= CORE_R) return 1;               // central diamond
+  const a = Math.atan2(dy, dx) * 180 / Math.PI;                       // screen y points down
+  if (a >= -150 && a < -30) return 2;                                 // North: upper 120°
+  if (a >= -30 && a < 90) return 4;                                   // East: right / lower-right
+  return 3;                                                           // West: left / lower-left
+}
+
+const grid = [];          // grid[y][x] = { land, district, road, building|null, park }
+for (let y = 0; y < N; y++) {
+  grid.push([]);
+  for (let x = 0; x < N; x++) grid[y].push({ x, y, land: isLand(x, y), district: districtOf(x, y), road: false, building: null, park: false });
+}
+const cell = (x, y) => (x >= 0 && y >= 0 && x < N && y < N ? grid[y][x] : null);
+
+for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+  const c = grid[y][x];
+  if (!c.land) continue;
+  // street grid through the centre
+  if ((x - C) % ROAD_STEP === 0 || (y - C) % ROAD_STEP === 0) c.road = true;
+  // roads on district borders (right / down neighbour in another district)
+  const r = cell(x + 1, y), d = cell(x, y + 1);
+  if ((r && r.land && r.district !== c.district) || (d && d.land && d.district !== c.district)) c.road = true;
+}
+// the outer ring of the rhombus is a coastal promenade
+for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+  const c = grid[y][x];
+  if (c.land && Math.abs(x - C) + Math.abs(y - C) === R) c.road = true;
+}
+
+/* ---------- 2. placement of buildings ---------- */
+const buildings = [];
+const FOOTPRINTS = { '3x3': [[3, 3]], '2x2': [[2, 2]], '1x2': [[1, 2]], '1x1': [[1, 1]] };   // one orientation, like the building art
+
+const NAME_PARTS = {
+  '3x3': ['Нейро-Цитадель', 'Квантовый Шпиль', 'Мега-Реактор', 'Синдикат', 'Неон-Арена', 'Дата-Монолит', 'Кибер-Банк', 'Голо-Башня'],
+  '2x2': ['Фабрика Чипов', 'ИИ-Лаборатория', 'Дрон-Ангар', 'NFT-Студия', 'VR-Клуб', 'Кибер-Кафе', 'Ремзона'],
+  '1x2': ['Логистик-Хаб', 'Сервер-Блок', 'Голо-Маркет', 'Неон-Мастерская'],
+  '1x1': ['Солнечная станция', 'Шахта кварца', 'Вышка трафика', 'Хладокомбинат', 'Био-ферма', 'Свалка', 'Дата-центр'],
+};
+
+function centroid(did) {
+  let sx = 0, sy = 0, n = 0;
+  for (const row of grid) for (const c of row) if (c.district === did && !c.road) { sx += c.x; sy += c.y; n++; }
+  return { x: sx / n, y: sy / n };
+}
+
+function fits(did, x, y, w, h) {
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+    const c = cell(x + i, y + j);
+    if (!c || !c.land || c.road || c.building || c.district !== did) return false;
+  }
+  return true;
+}
+
+// how snugly a footprint sits: perimeter cells that are road / built / outside
+function snug(x, y, w, h) {
+  let s = 0;
+  for (let i = -1; i <= w; i++) for (let j = -1; j <= h; j++) {
+    if (i >= 0 && i < w && j >= 0 && j < h) continue;
+    if ((i === -1 || i === w) && (j === -1 || j === h)) continue;      // skip corners
+    const c = cell(x + i, y + j);
+    if (!c || !c.land || c.road || c.building) s++;
+  }
+  return s;
+}
+
+function place(did, type, count, ctr) {
+  let placed = 0;
+  while (placed < count) {
+    let best = null;
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      for (const [w, h] of FOOTPRINTS[type]) {
+        if (!fits(did, x, y, w, h)) continue;
+        const dist = Math.hypot(x + w / 2 - ctr.x, y + h / 2 - ctr.y);
+        const perim = 2 * (w + h);
+        // tight packing first (avoids fragmenting blocks), then closeness to the centre
+        const score = (snug(x, y, w, h) / perim) * 10 - dist * (type === '1x1' ? 0.6 : 0.25) + rand() * 0.15;
+        if (!best || score > best.score) best = { x, y, w, h, score };
+      }
+    }
+    if (!best) return placed;                                    // no room left
+    const names = NAME_PARTS[type];
+    const b = {
+      id: 0, districtId: did, type, status: 'active',
+      x: best.x, y: best.y, width: best.w, height: best.h,
+      name: names[Math.floor(rand() * names.length)],
+    };
+    buildings.push(b);
+    for (let j = 0; j < b.height; j++) for (let i = 0; i < b.width; i++) grid[b.y + j][b.x + i].building = b;
+    placed++;
+  }
+  return placed;
+}
+
+/* Parks are spread evenly BEFORE the 1x1 buildings are placed:
+   free cells of a district = 1x1 quota + spare cells. The spare cells become
+   small squares (2-4 cells) chosen by farthest-point sampling — every new
+   square goes as far as possible from the squares already placed — so the
+   greenery is scattered over the whole district instead of one corner. */
+const PARK_CLUSTER = 4;
+function spreadParks(did) {
+  const free = [];
+  for (const row of grid) for (const c of row) if (c.district === did && c.land && !c.road && !c.building) free.push(c);
+  const spare = free.length - DISTRICTS.find(d => d.id === did).quota['1x1'];
+  if (spare <= 0) return spare;
+  const parks = [];
+  const isFree = (c) => c && c.district === did && c.land && !c.road && !c.building && !c.park;
+  const minDist2 = (c) => {
+    let m = Infinity;
+    for (const p of parks) { const dx = p.x - c.x, dy = p.y - c.y, d2 = dx * dx + dy * dy; if (d2 < m) m = d2; }
+    return m;
+  };
+  while (parks.length < spare) {
+    // seed: the free cell farthest from every existing park (small jitter breaks ties)
+    let seed = null, best = -1;
+    for (const c of free) {
+      if (c.park) continue;
+      const score = (parks.length ? minDist2(c) : 0) + rand() * 0.5;
+      if (score > best) { best = score; seed = c; }
+    }
+    if (!seed) break;
+    // grow a small square around the seed: prefer a 2x2 block
+    const want = Math.min(PARK_CLUSTER, spare - parks.length);
+    let cluster = [seed];
+    for (const [ox, oy] of [[0, 0], [-1, 0], [0, -1], [-1, -1]]) {
+      const sq = [cell(seed.x + ox, seed.y + oy), cell(seed.x + ox + 1, seed.y + oy), cell(seed.x + ox, seed.y + oy + 1), cell(seed.x + ox + 1, seed.y + oy + 1)];
+      if (sq.every(isFree)) { cluster = sq; break; }
+    }
+    if (cluster.length === 1) {                                   // no 2x2 room: take free neighbours
+      for (const [dx, dy] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) { const n = cell(seed.x + dx, seed.y + dy); if (isFree(n)) cluster.push(n); }
+    }
+    for (const c of cluster.slice(0, want)) { c.park = true; parks.push(c); }
+  }
+  return spare;
+}
+
+const placementErrors = [];
+for (const d of DISTRICTS) {
+  const ctr = centroid(d.id);
+  d.center = ctr;
+  for (const type of ['3x3', '2x2', '1x2']) {
+    const got = place(d.id, type, d.quota[type], ctr);
+    if (got !== d.quota[type]) placementErrors.push(`${d.short}: ${type} — поставлено ${got} из ${d.quota[type]}`);
+  }
+  const spare = spreadParks(d.id);
+  if (spare < 0) placementErrors.push(`${d.short}: не хватает ${-spare} клеток для 1x1`);
+  // every remaining free cell of the district gets a 1x1 building
+  let got = 0;
+  const names = NAME_PARTS['1x1'];
+  for (const row of grid) for (const c of row) {
+    if (c.district !== d.id || !c.land || c.road || c.building || c.park) continue;
+    const b = { id: 0, districtId: d.id, type: '1x1', status: 'active', x: c.x, y: c.y, width: 1, height: 1, name: names[Math.floor(rand() * names.length)] };
+    buildings.push(b); c.building = b; got++;
+  }
+  if (got !== d.quota['1x1']) placementErrors.push(`${d.short}: 1x1 — поставлено ${got} из ${d.quota['1x1']}`);
+}
+// stable ids: district, then size, then reading order
+const TYPE_ORDER = { '3x3': 0, '2x2': 1, '1x2': 2, '1x1': 3 };
+buildings.sort((a, b) => a.districtId - b.districtId || TYPE_ORDER[a.type] - TYPE_ORDER[b.type] || a.y - b.y || a.x - b.x);
+buildings.forEach((b, i) => { b.id = i + 1; b.name = `${b.name} #${b.id}`; });
+
+// parks / green decor = the cells reserved by spreadParks()
+let parkCount = 0;
+for (const row of grid) for (const c of row) if (c.land && !c.road && !c.building) { c.park = true; parkCount++; }
+
+/* ---------- 3. admin state ---------- */
+const STORE_KEY = 'gramcity_district_admin_v1';
+const defaultAdmin = () => ({
+  unlocked: { 1: true, 2: true, 3: true, 4: true },
+  activeCount: Object.fromEntries(DISTRICTS.map(d => [d.id, Object.values(d.quota).reduce((a, b) => a + b, 0)])),
+  filter: 'all', labels: true,
+});
+let admin = defaultAdmin();
+try { const s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); if (s && s.unlocked) admin = { ...admin, ...s }; } catch (e) { /* storage unavailable */ }
+const saveAdmin = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(admin)); } catch (e) { /* ignore */ } };
+
+function applyStatuses() {
+  // the first N businesses of a district (by id: big ones first) are open, the rest reserved
+  for (const d of DISTRICTS) {
+    const list = buildings.filter(b => b.districtId === d.id);
+    const n = Math.max(0, Math.min(list.length, admin.activeCount[d.id] ?? list.length));
+    list.forEach((b, i) => { b.status = !admin.unlocked[d.id] ? 'locked' : i < n ? 'active' : 'reserved'; });
+  }
+}
+
+/* ---------- 4. camera ---------- */
+const canvas = document.getElementById('map');
+const ctx = canvas.getContext('2d');
+let DPR = Math.min(window.devicePixelRatio || 1, 2);
+const cam = { x: (N * CELL) / 2, y: (N * CELL) / 2, z: 0.5 };
+let target = null;                        // camera fly target
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.floor(innerWidth * DPR);
+  canvas.height = Math.floor(innerHeight * DPR);
+  requestDraw();
+}
+const worldToScreen = (wx, wy) => [(wx - cam.x) * cam.z + innerWidth / 2, (wy - cam.y) * cam.z + innerHeight / 2];
+const screenToWorld = (sx, sy) => [(sx - innerWidth / 2) / cam.z + cam.x, (sy - innerHeight / 2) / cam.z + cam.y];
+const fitZoom = (cells) => Math.min(innerWidth / (cells * CELL), (innerHeight - 150) / (cells * CELL));
+
+function flyTo(did) {
+  if (!did) { target = { x: (N * CELL) / 2, y: (N * CELL) / 2, z: fitZoom(N + 2) }; }
+  else {
+    let minX = N, minY = N, maxX = 0, maxY = 0;
+    for (const row of grid) for (const c of row) if (c.district === did) { minX = Math.min(minX, c.x); maxX = Math.max(maxX, c.x); minY = Math.min(minY, c.y); maxY = Math.max(maxY, c.y); }
+    target = { x: ((minX + maxX + 1) / 2) * CELL, y: ((minY + maxY + 1) / 2) * CELL, z: fitZoom(Math.max(maxX - minX, maxY - minY) + 3) };
+  }
+  document.querySelectorAll('[data-fly]').forEach(b => b.classList.toggle('active', Number(b.dataset.fly) === did));
+  requestDraw();
+}
+
+/* ---------- 5. drawing ---------- */
+let drawQueued = false;
+function requestDraw() { if (!drawQueued) { drawQueued = true; requestAnimationFrame(frame); } }
+
+function frame() {
+  drawQueued = false;
+  if (target) {                                           // smooth camera flight
+    const k = 0.14;
+    cam.x += (target.x - cam.x) * k; cam.y += (target.y - cam.y) * k; cam.z += (target.z - cam.z) * k;
+    if (Math.abs(target.x - cam.x) < 0.5 && Math.abs(target.y - cam.y) < 0.5 && Math.abs(target.z - cam.z) < 0.002) { cam.x = target.x; cam.y = target.y; cam.z = target.z; target = null; }
+    else requestDraw();
+  }
+  draw();
+}
+
+function visible(type) { return admin.filter === 'all' || admin.filter === type; }
+
+function draw() {
+  const W = innerWidth, H = innerHeight;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  // background: dark sea with a faint cyber grid
+  ctx.fillStyle = '#05060a'; ctx.fillRect(0, 0, W, H);
+  ctx.save();
+  ctx.translate(W / 2, H / 2); ctx.scale(cam.z, cam.z); ctx.translate(-cam.x, -cam.y);
+
+  const s = CELL;
+  // sea grid
+  ctx.strokeStyle = 'rgba(0,120,200,0.10)'; ctx.lineWidth = 1 / cam.z;
+  ctx.beginPath();
+  for (let i = -6; i <= N + 6; i++) { ctx.moveTo(i * s, -6 * s); ctx.lineTo(i * s, (N + 6) * s); ctx.moveTo(-6 * s, i * s); ctx.lineTo((N + 6) * s, i * s); }
+  ctx.stroke();
+
+  // 1) ground + roads
+  for (const row of grid) for (const c of row) {
+    if (!c.land) continue;
+    const x = c.x * s, y = c.y * s;
+    if (c.road) {
+      ctx.fillStyle = '#1b2130'; ctx.fillRect(x, y, s, s);
+    } else {
+      ctx.fillStyle = '#0d1220'; ctx.fillRect(x, y, s, s);
+    }
+  }
+  // road centre lines (neon), only when zoomed in enough
+  if (cam.z > 0.55) {
+    ctx.strokeStyle = 'rgba(0,240,255,0.22)'; ctx.lineWidth = 1.2 / cam.z; ctx.setLineDash([4 / cam.z, 4 / cam.z]);
+    ctx.beginPath();
+    for (const row of grid) for (const c of row) {
+      if (!c.road) continue;
+      const cx = (c.x + 0.5) * s, cy = (c.y + 0.5) * s;
+      const r = cell(c.x + 1, c.y), d = cell(c.x, c.y + 1);
+      if (r && r.road) { ctx.moveTo(cx, cy); ctx.lineTo(cx + s, cy); }
+      if (d && d.road) { ctx.moveTo(cx, cy); ctx.lineTo(cx, cy + s); }
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // 2) parks
+  if (visible('park')) {
+    for (const row of grid) for (const c of row) {
+      if (!c.park) continue;
+      const x = c.x * s, y = c.y * s;
+      ctx.fillStyle = 'rgba(57,255,136,0.20)'; ctx.fillRect(x + 1, y + 1, s - 2, s - 2);
+      ctx.fillStyle = '#39ff88';
+      ctx.beginPath(); ctx.arc(x + s * 0.35, y + s * 0.4, s * 0.16, 0, Math.PI * 2); ctx.arc(x + s * 0.66, y + s * 0.62, s * 0.13, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  // 3) buildings (merged blocks)
+  const labels = admin.labels && cam.z > 0.32;
+  for (const b of buildings) {
+    if (!visible(b.type)) continue;
+    const x = b.x * s, y = b.y * s, w = b.width * s, h = b.height * s, col = TYPE_COLOR[b.type];
+    const dim = b.status === 'reserved';
+    ctx.globalAlpha = dim ? 0.28 : 1;
+    ctx.fillStyle = col + (b.type === '1x1' ? '55' : '40');
+    ctx.fillRect(x + 1.5, y + 1.5, w - 3, h - 3);
+    ctx.shadowColor = col; ctx.shadowBlur = dim ? 0 : 8;
+    ctx.strokeStyle = col; ctx.lineWidth = b.type === '3x3' ? 2.6 : 1.8;
+    ctx.strokeRect(x + 1.5, y + 1.5, w - 3, h - 3);
+    ctx.shadowBlur = 0;
+    if (b.type === '1x1') {                                         // small roof + light
+      ctx.fillStyle = col; ctx.fillRect(x + s * 0.32, y + s * 0.32, s * 0.36, s * 0.36);
+    } else if (labels) {
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `800 ${b.type === '3x3' ? 15 : 10}px "Segoe UI", Arial`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(b.type, x + w / 2, y + h / 2);
+      if (b.type === '3x3' && cam.z > 0.9) { ctx.font = '600 7px "Segoe UI", Arial'; ctx.fillStyle = '#ffd6f6'; ctx.fillText(b.name.replace(/ #\d+$/, ''), x + w / 2, y + h / 2 + 13); }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // 4) district borders
+  for (const d of DISTRICTS) {
+    ctx.strokeStyle = d.color; ctx.lineWidth = 2.4 / Math.max(cam.z, 0.4); ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    for (const row of grid) for (const c of row) {
+      if (c.district !== d.id) continue;
+      const x = c.x * s, y = c.y * s;
+      const n = [[0, -1, x, y, x + s, y], [1, 0, x + s, y, x + s, y + s], [0, 1, x, y + s, x + s, y + s], [-1, 0, x, y, x, y + s]];
+      for (const [dx, dy, x1, y1, x2, y2] of n) {
+        const o = cell(c.x + dx, c.y + dy);
+        if (!o || o.district !== d.id) { ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); }
+      }
+    }
+    ctx.stroke(); ctx.globalAlpha = 1;
+  }
+
+  // 5) locked districts: dark overlay + lock + text
+  for (const d of DISTRICTS) {
+    if (admin.unlocked[d.id]) continue;
+    ctx.fillStyle = 'rgba(2,3,8,0.72)';
+    for (const row of grid) for (const c of row) if (c.district === d.id) ctx.fillRect(c.x * s, c.y * s, s, s);
+  }
+  ctx.restore();
+
+  // labels in screen space (stay readable at any zoom)
+  for (const d of DISTRICTS) {
+    const [sx, sy] = worldToScreen((d.center.x + 0.5) * s, (d.center.y + 0.5) * s);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    if (!admin.unlocked[d.id]) {
+      ctx.font = '32px "Segoe UI", Arial'; ctx.fillText('🔒', sx, sy - 26);
+      ctx.font = '900 14px "Segoe UI", Arial'; ctx.fillStyle = '#ff5d7a';
+      ctx.fillText('СЕКТОР ЗАКРЫТ АДМИНИСТРАЦИЕЙ', sx, sy + 6);
+      ctx.font = '700 12px "Segoe UI", Arial'; ctx.fillStyle = '#c7d3df'; ctx.fillText(d.name, sx, sy + 26);
+    } else if (cam.z < 0.75) {
+      ctx.font = '900 15px "Segoe UI", Arial'; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,0,0,.75)';
+      ctx.strokeText(d.name, sx, sy); ctx.fillStyle = d.color; ctx.fillText(d.name, sx, sy);
+    }
+  }
+}
+
+/* ---------- 6. input: drag / wheel / pinch / hover ---------- */
+let drag = null, pinch = null;
+const pointers = new Map();
+canvas.addEventListener('pointerdown', (e) => {
+  canvas.setPointerCapture(e.pointerId); pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  target = null;
+  if (pointers.size === 1) { drag = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y, moved: false }; canvas.classList.add('dragging'); }
+  if (pointers.size === 2) {
+    const [a, b] = [...pointers.values()];
+    pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), z: cam.z }; drag = null;
+  }
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pinch && pointers.size === 2) {
+    const [a, b] = [...pointers.values()];
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    zoomAt(mx, my, (pinch.z * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d) / cam.z);
+    return;
+  }
+  if (drag) {
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+    cam.x = drag.cx - dx / cam.z; cam.y = drag.cy - dy / cam.z; requestDraw(); hideTip();
+  } else hover(e.clientX, e.clientY);
+});
+const endPointer = (e) => {
+  pointers.delete(e.pointerId);
+  if (pointers.size < 2) pinch = null;
+  if (drag && !drag.moved && e.type === 'pointerup') hover(e.clientX, e.clientY, true);
+  if (pointers.size === 0) { drag = null; canvas.classList.remove('dragging'); }
+};
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+canvas.addEventListener('pointerleave', () => hideTip());
+canvas.addEventListener('wheel', (e) => { e.preventDefault(); target = null; zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
+
+function zoomAt(sx, sy, factor) {
+  const [wx, wy] = screenToWorld(sx, sy);
+  cam.z = Math.min(4, Math.max(0.15, cam.z * factor));
+  cam.x = wx - (sx - innerWidth / 2) / cam.z; cam.y = wy - (sy - innerHeight / 2) / cam.z;
+  requestDraw();
+}
+
+const tip = document.getElementById('tip');
+function hideTip() { tip.style.display = 'none'; }
+const STATUS_RU = { active: 'открыт', reserved: 'закрыт (лимит района)', locked: 'район закрыт' };
+function hover(sx, sy, sticky) {
+  const [wx, wy] = screenToWorld(sx, sy);
+  const c = cell(Math.floor(wx / CELL), Math.floor(wy / CELL));
+  if (!c || !c.land) return hideTip();
+  const d = DISTRICTS.find(q => q.id === c.district);
+  let html;
+  if (c.building) {
+    const b = c.building;
+    html = `<b>${b.name}</b><br>ID: ${b.id} · ${d.short}<br>Тип: ${b.type} (${b.width * b.height} кл.)<br>Позиция: x ${b.x}, y ${b.y} · ${b.width}×${b.height}<br>Статус: ${STATUS_RU[b.status]}`;
+  } else if (c.park) html = `<b>Парк / декор</b><br>${d ? d.short : ''} · клетка ${c.x}, ${c.y}`;
+  else if (c.road) html = `<b>Дорога</b><br>${d ? d.short : ''}`;
+  else return hideTip();
+  tip.innerHTML = html; tip.style.display = 'block';
+  tip.style.left = Math.min(sx + 14, innerWidth - 250) + 'px'; tip.style.top = Math.min(sy + 14, innerHeight - 120) + 'px';
+}
+
+/* ---------- 7. UI: buttons, admin panel, counter ---------- */
+const btnWrap = document.getElementById('districtButtons');
+btnWrap.innerHTML = DISTRICTS.map(d => `<button class="btn" data-fly="${d.id}"><span class="dot" style="background:${d.color};box-shadow:0 0 6px ${d.color}"></span>${d.short}</button>`).join(' ');
+document.querySelectorAll('[data-fly]').forEach(b => b.addEventListener('click', () => flyTo(Number(b.dataset.fly))));
+
+const adminEl = document.getElementById('admin');
+document.getElementById('adminToggle').onclick = () => adminEl.classList.toggle('open');
+document.getElementById('adminClose').onclick = () => adminEl.classList.remove('open');
+
+function districtTotal(d) { return Object.values(d.quota).reduce((a, b) => a + b, 0); }
+
+function renderAdmin() {
+  document.getElementById('adminDistricts').innerHTML = DISTRICTS.map(d => `
+    <div class="row">
+      <span class="dot" style="width:10px;height:10px;border-radius:50%;background:${d.color};box-shadow:0 0 6px ${d.color}"></span>
+      <span class="name">${d.name}<small>3x3: ${d.quota['3x3']} · 2x2: ${d.quota['2x2']} · 1x2: ${d.quota['1x2']} · 1x1: ${d.quota['1x1']} = ${districtTotal(d)}</small></span>
+      <label class="switch"><input type="checkbox" data-unlock="${d.id}" ${admin.unlocked[d.id] ? 'checked' : ''}><span class="slider"></span></label>
+    </div>`).join('');
+  document.getElementById('adminActive').innerHTML = DISTRICTS.map(d => `
+    <div class="row">
+      <span class="name" style="flex:0 0 74px">${d.short}</span>
+      <input type="range" min="0" max="${districtTotal(d)}" value="${admin.activeCount[d.id]}" data-active-range="${d.id}">
+      <input type="number" min="0" max="${districtTotal(d)}" value="${admin.activeCount[d.id]}" data-active-num="${d.id}">
+    </div>`).join('');
+  document.getElementById('filter').value = admin.filter;
+  document.getElementById('showLabels').checked = admin.labels;
+
+  document.querySelectorAll('[data-unlock]').forEach(el => el.onchange = () => { admin.unlocked[el.dataset.unlock] = el.checked; update(); });
+  document.querySelectorAll('[data-active-range]').forEach(el => el.oninput = () => {
+    admin.activeCount[el.dataset.activeRange] = Number(el.value);
+    document.querySelector(`[data-active-num="${el.dataset.activeRange}"]`).value = el.value; update(false);
+  });
+  document.querySelectorAll('[data-active-num]').forEach(el => el.onchange = () => {
+    const d = DISTRICTS.find(q => q.id === Number(el.dataset.activeNum));
+    const v = Math.max(0, Math.min(districtTotal(d), Math.round(Number(el.value) || 0)));
+    admin.activeCount[d.id] = v; update();
+  });
+}
+document.getElementById('filter').onchange = (e) => { admin.filter = e.target.value; update(false); };
+document.getElementById('showLabels').onchange = (e) => { admin.labels = e.target.checked; update(false); };
+document.getElementById('resetAdmin').onclick = () => { admin = defaultAdmin(); update(); };
+
+function update(rebuildAdmin = true) {
+  applyStatuses(); saveAdmin();
+  if (rebuildAdmin) renderAdmin();
+  document.querySelectorAll('[data-fly]').forEach(b => { const id = Number(b.dataset.fly); b.classList.toggle('locked', id > 0 && !admin.unlocked[id]); });
+  renderCounter(); requestDraw();
+}
+
+function renderCounter() {
+  const count = (t) => buildings.filter(b => t === 'all' || b.type === t).length;
+  const all = count('all'), c3 = count('3x3'), c22 = count('2x2'), c12 = count('1x2'), c1 = count('1x1');
+  const okAll = all === TOTAL_EXPECTED.all && c3 === TOTAL_EXPECTED['3x3'] && c22 + c12 === 56 && c1 === TOTAL_EXPECTED['1x1'];
+  const open = buildings.filter(b => b.status === 'active').length;
+  const districtsOpen = DISTRICTS.filter(d => admin.unlocked[d.id]).length;
+  document.getElementById('counter').innerHTML =
+    `<span class="${okAll ? 'ok' : 'bad'}">Всего бизнесов: ${all}/478</span> | 3x3: ${c3} | 2x2/1x2: ${c22 + c12} (${c22}+${c12}) | 1x1: ${c1} | ` +
+    `Активных районов: ${districtsOpen}/4 | Открыто бизнесов: ${open} | Парков: ${parkCount}`;
+}
+
+/* ---------- 8. start ---------- */
+if (placementErrors.length) {
+  const e = document.getElementById('err'); e.style.display = 'block';
+  e.textContent = 'Не хватило места: ' + placementErrors.join('; ');
+}
+// expose the data model (for the backend / debugging)
+window.GRAM_MAP = { grid, buildings, districts: DISTRICTS, parks: parkCount, errors: placementErrors };
+addEventListener('resize', resize);
+resize();
+cam.z = fitZoom(N + 2);
+update();
+flyTo(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "summary": "Frontend-only testing of the /my-businesses (Business) screen adaptive layout on multiple mobile viewports (360x600, 375x667, 414x896). Verified: no vertical scroll on any viewport, header/action-row/bottom-nav never clipped, ACTIVE BUFFS banner correctly removed from main page, modal opens on business art click, business title (BIO FARM) sits visually below the TASKS/MARKET row. Login via API + localStorage token injection was used (UI login not tested).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/resources/buffs", "issue": "Returns 404 Not Found for both admin (sanyanazarov212@gmail.com) and regular (testuser@example.com) accounts. This prevents any resource-buff data from being seeded/returned, so the modal's ACTIVE BUFFS section can never render its content (it is conditional on resourceBuffsData.active.length > 0). If the endpoint URL has changed the frontend still points at /api/resources/buffs; if the resource is unauthenticated by default the seed must be re-run to attach an active buff."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Active buffs display inside business-details modal", "issue": "Code (MyBusinessesPage.jsx line 1823-1857) correctly places the [data-testid=active-buffs-banner] inside the Dialog, guarded by (resourceBuffsData.active || []).length > 0. Because the backend endpoint /api/resources/buffs returns 404, resourceBuffsData.active stays empty and the banner is never rendered in the modal. This is a data/seed issue, not a UI wiring bug. Cannot end-to-end verify 'System Overclock / Разгон системы' visibility without valid buff data.", "affected_selectors": ["[data-testid=active-buffs-banner]", "[data-testid^=active-buff-]"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Investigate /api/resources/buffs 404 (route missing or renamed?). Once fixed and testuser+admin have at least one active buff seeded (e.g., System Overclock / Разгон системы), retest that the banner appears inside the Business details modal only (not on the page)."
+  ],
+  "critical_code_review_comments": [
+    "MyBusinessesPage.jsx is very large (2446 lines) — consider splitting the details modal, header, and pinned footer into their own components for maintainability.",
+    "Active buffs banner in the modal (line 1824) silently disappears when resourceBuffsData is empty due to the 404 above; a graceful empty state (or at least a console.warn on the 404) would help future debugging."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (not requested)", "frontend": "85% (layout, bottom-nav, no-scroll, banner removal from page, modal opens — all pass; only the buffs-in-modal content could not be verified due to backend 404)"},
+  "test_credentials": "Admin: sanyanazarov212@gmail.com / Qetuyrwioo (login 200). Regular: testuser@example.com / Test1234! (login 200). Both have 1 seeded bio_farm business.",
+  "seed_data_creation": "None. Used existing seeded accounts.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Layout verified across 360x600, 375x667, 414x896 mobile viewports — all pass (no vertical scroll, header/action-row/bottom-nav never clipped, correct data-testid on biz-header/biz-action-row-pinned/biz-action-row/biz-fixed-panels/bottom-nav/business-image-<id>). Business title BIO FARM renders below the TASKS/MARKET row (visible in screenshots). ACTIVE BUFFS banner correctly ABSENT on main page body. Business details modal opens on art click and correctly shows Bio Farm / Tier 1 / Level 3 / Durability / Tax / Warehouse / ID / List for sale. Active buffs section is present in code inside the modal (line 1824) but is conditionally rendered — currently hidden because backend /api/resources/buffs returns 404 for both test accounts. To fully validate that particular sub-feature, main agent must fix/expose the buffs endpoint and seed an active buff.",
+  "rca of the issue": "N/A — layout tasks pass. The only outstanding item is a backend 404 on /api/resources/buffs preventing the active-buffs UI from rendering data; frontend code is wired correctly."
+}

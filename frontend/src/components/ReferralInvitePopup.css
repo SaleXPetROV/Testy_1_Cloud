@@ -1,0 +1,322 @@
+/*
+  ReferralInvitePopup — легендарная карточка «ресурс 3-го эшелона»:
+  переливающаяся неоновая рамка (бирюзовый ↔ фиолетовый) + свечение
+  и лёгкий шимер по тексту.
+
+  Матчится с существующим классом `.referral-legendary` (см. index.css)
+  из настроек, но вынесен отдельно, чтобы иметь свой оверлей, стеккинг,
+  анимацию появления и подсветку текста.
+*/
+
+@keyframes referralInviteBorderShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@keyframes referralInviteTextGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 6px rgba(0, 229, 255, 0.35),
+      0 0 14px rgba(122, 46, 255, 0.25);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(0, 229, 255, 0.7),
+      0 0 22px rgba(122, 46, 255, 0.55),
+      0 0 34px rgba(0, 229, 255, 0.35);
+  }
+}
+
+@keyframes referralInvitePopIn {
+  0%   { opacity: 0; transform: translateY(12px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+@keyframes referralInviteFadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes referralInviteIconFloat {
+  0%, 100% { transform: translateY(0)    rotate(0deg); }
+  50%      { transform: translateY(-3px) rotate(-4deg); }
+}
+
+.referral-invite-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background:
+    radial-gradient(60% 50% at 50% 30%, rgba(0, 229, 255, 0.10), transparent 70%),
+    rgba(4, 6, 12, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: referralInviteFadeIn 220ms ease-out both;
+}
+
+.referral-invite-legendary {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  padding: 2px;                 /* border thickness */
+  border-radius: 22px;
+  background: linear-gradient(120deg,
+    #00E5FF 0%,
+    #7A2EFF 25%,
+    #22E2FF 50%,
+    #A24BFF 75%,
+    #00E5FF 100%);
+  background-size: 300% 300%;
+  animation: referralInviteBorderShimmer 6s ease-in-out infinite,
+             referralInvitePopIn 320ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+  box-shadow:
+    0 0 28px rgba(0, 229, 255, 0.35),
+    0 0 70px rgba(122, 46, 255, 0.28),
+    0 20px 60px rgba(0, 0, 0, 0.55);
+}
+
+.referral-invite-inner {
+  position: relative;
+  border-radius: 20px;
+  padding: 22px 20px 20px;
+  background:
+    radial-gradient(120% 140% at 0% 0%,   rgba(0, 229, 255, 0.14), transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, rgba(122, 46, 255, 0.16), transparent 55%),
+    #0a0e14;
+  overflow: hidden;
+}
+
+.referral-invite-inner::before {
+  /* мягкий "прозрачный" отблеск сверху */
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 60%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.045), transparent 80%);
+  pointer-events: none;
+}
+
+.referral-invite-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.06);
+  color: #e5f9ff;
+  border: 1px solid rgba(255,255,255,0.10);
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
+  z-index: 2;
+}
+.referral-invite-close:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(0, 229, 255, 0.45);
+  transform: scale(1.06);
+}
+
+.referral-invite-icon {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0 12px;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.22), rgba(122, 46, 255, 0.22));
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  color: #d7fbff;
+  box-shadow:
+    inset 0 0 20px rgba(0, 229, 255, 0.18),
+    0 0 18px rgba(122, 46, 255, 0.25);
+  animation: referralInviteIconFloat 3.6s ease-in-out infinite;
+}
+.referral-invite-icon-sparkle {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: #ffe27a;
+  filter: drop-shadow(0 0 4px rgba(255, 226, 122, 0.7));
+}
+
+.referral-invite-title {
+  font-size: 20px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  margin: 0 0 8px;
+  color: #ffffff;
+  background: linear-gradient(90deg, #A6F4FF 0%, #FFFFFF 45%, #E1BFFF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: referralInviteTextGlow 3.2s ease-in-out infinite;
+}
+
+.referral-invite-message {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #cfeaff;
+  margin: 0 0 16px;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.16);
+}
+
+/* Highlighted "5%" — bolder + pulsing glow */
+@keyframes referralInviteHighlightGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 6px rgba(255, 226, 122, 0.55),
+      0 0 14px rgba(0, 229, 255, 0.35);
+  }
+  50% {
+    text-shadow:
+      0 0 12px rgba(255, 226, 122, 0.95),
+      0 0 26px rgba(0, 229, 255, 0.75),
+      0 0 40px rgba(122, 46, 255, 0.4);
+  }
+}
+
+.referral-invite-highlight {
+  font-weight: 900;
+  font-size: 1.1em;
+  padding: 0 2px;
+  color: #ffe27a;
+  background: linear-gradient(90deg, #FFE27A 0%, #FFFFFF 50%, #6EE7FF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: referralInviteHighlightGlow 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 226, 122, 0.55));
+}
+
+.referral-invite-link-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.referral-invite-link-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #7ad8f0;
+  font-weight: 700;
+}
+
+.referral-invite-link-box {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  padding: 6px 6px 6px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(0, 229, 255, 0.28);
+  box-shadow: inset 0 0 12px rgba(0, 229, 255, 0.08);
+}
+
+.referral-invite-link-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: #f2fbff;
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  padding: 6px 4px;
+}
+
+.referral-invite-copy-btn {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.20), rgba(122, 46, 255, 0.20));
+  color: #eaffff;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+.referral-invite-copy-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.35), rgba(122, 46, 255, 0.35));
+  border-color: rgba(0, 229, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.referral-invite-share-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: #041220;
+  background: linear-gradient(120deg, #00E5FF 0%, #6EE7FF 45%, #B78BFF 100%);
+  background-size: 200% 200%;
+  border: 0;
+  cursor: pointer;
+  box-shadow:
+    0 0 22px rgba(0, 229, 255, 0.45),
+    0 6px 20px rgba(122, 46, 255, 0.35);
+  transition: transform 160ms ease, box-shadow 160ms ease, background-position 300ms ease;
+}
+.referral-invite-share-btn:hover {
+  transform: translateY(-1px);
+  background-position: 100% 50%;
+  box-shadow:
+    0 0 30px rgba(0, 229, 255, 0.6),
+    0 10px 26px rgba(122, 46, 255, 0.45);
+}
+.referral-invite-share-btn:active {
+  transform: translateY(0);
+}
+
+/* --- Mobile tuning --- */
+@media (max-width: 480px) {
+  .referral-invite-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+  .referral-invite-legendary {
+    max-width: 100%;
+    border-radius: 20px;
+  }
+  .referral-invite-inner {
+    padding: 18px 16px 16px;
+    border-radius: 18px;
+  }
+  .referral-invite-title {
+    font-size: 18px;
+  }
+  .referral-invite-message {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .referral-invite-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+  .referral-invite-link-input {
+    font-size: 12px;
+  }
+  .referral-invite-share-btn {
+    padding: 12px 14px;
+  }
+}
