@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+jwt_secret.key
+tests/
+.pytest_cache/

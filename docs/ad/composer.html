@@ -1,0 +1,119 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="fonts_local.css">
+<style>
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#030304;font-family:Rajdhani,sans-serif;color:#fff}
+#bg{position:absolute;inset:0}
+.scene{position:absolute;inset:0;opacity:0}
+.cap{position:absolute;left:70px;right:70px;top:120px;text-align:center}
+.title{font-family:Unbounded,sans-serif;font-weight:800;font-size:68px;line-height:1.08;letter-spacing:.5px;text-transform:uppercase;
+  text-shadow:0 0 28px rgba(0,240,255,.35)}
+.title b{background:linear-gradient(90deg,#00F0FF,#7DF9FF 40%,#FFD84D);-webkit-background-clip:text;color:transparent}
+.sub{margin-top:18px;font-size:44px;font-weight:600;color:#cfe9ff;opacity:.9}
+.phone{position:absolute;left:220px;top:440px;width:640px;height:1385px;border-radius:64px;overflow:hidden;
+  border:3px solid rgba(0,240,255,.55);box-shadow:0 0 60px rgba(0,240,255,.25),0 40px 120px rgba(0,0,0,.7);background:#000}
+.phone img{position:absolute;left:0;top:0;width:640px;height:1385px;transform-origin:50% 50%}
+.ring{position:absolute;width:120px;height:120px;margin:-60px 0 0 -60px;border-radius:50%;border:5px solid #FFD84D;
+  box-shadow:0 0 30px #FFD84D;opacity:0}
+.tag{position:absolute;padding:10px 22px;border-radius:999px;background:#FFD84D;color:#111;font-family:Unbounded;font-weight:800;
+  font-size:26px;white-space:nowrap;opacity:0;box-shadow:0 8px 30px rgba(255,216,77,.45)}
+.logo{z-index:2;position:absolute;left:0;right:0;text-align:center;font-family:Unbounded;font-weight:900;font-size:104px;letter-spacing:4px;white-space:nowrap;
+  color:#fff;text-shadow:0 0 30px #00F0FF,0 0 80px rgba(0,240,255,.6)}
+.tagline{z-index:2;position:absolute;left:40px;right:40px;text-align:center;font-size:56px;font-weight:700;color:#bff6ff}
+.cta{position:absolute;left:50%;transform:translateX(-50%);padding:30px 70px;border-radius:999px;font-family:Unbounded;font-weight:800;
+  font-size:46px;color:#031018;background:linear-gradient(90deg,#00F0FF,#7DF9FF);box-shadow:0 0 50px rgba(0,240,255,.6);white-space:nowrap}
+.icons span{position:absolute;font-size:100px;z-index:0;filter:drop-shadow(0 0 20px rgba(0,240,255,.5))}
+</style></head><body>
+<canvas id="bg" width="1080" height="1920"></canvas>
+<div id="root"></div>
+<script>
+const S = 640/1170, PX = 220, PY = 440;          // screenshot px -> phone px
+const SCENES = [
+ {id:'biz', a:3.0, b:7.0, img:'shots/biz.png', title:'Получи бизнес<br><b>и запусти смену</b>', sub:'Бизнес сам производит ресурсы',
+  focus:[585,1700], zoom:[1.0,1.07], calls:[{x:600,y:2223,at:0.9,tag:'Смена идёт'},{x:315,y:2040,at:2.0,tag:'+ресурсы каждый час'}]},
+ {id:'res', a:7.0, b:10.5, img:'shots/resources.png', title:'Ресурсы<br><b>на складе</b>', sub:'Энергия, биомасса, кварц и ещё 18 видов',
+  focus:[585,1047], zoom:[1.0,1.08], calls:[{x:588,y:1047,at:0.8,tag:'Твой склад'}]},
+ {id:'boost', a:10.5, b:13.5, img:'shots/boosters.png', title:'<b>Усилители</b>', sub:'Автозапуск смен, защита склада, баффы',
+  focus:[585,800], zoom:[1.0,1.06], calls:[{x:585,y:666,at:0.6,tag:'Работает само'},{x:933,y:1086,at:1.6,tag:'Активировать'}]},
+ {id:'trade', a:13.5, b:17.5, img:'shots/trading.png', title:'Торгуй<br><b>с игроками</b>', sub:'Покупай сырьё и продавай продукцию',
+  focus:[585,1100], zoom:[1.0,1.07], calls:[{x:582,y:945,at:0.9,tag:'Живой рынок'}]},
+ {id:'tasks', a:17.5, b:21.0, img:'shots/tasks.png', title:'Задания<br><b>каждый день</b>', sub:'Путь новичка, цели дня и недели',
+  focus:[585,1150], zoom:[1.0,1.06], calls:[{x:891,y:1191,at:0.8,tag:'Забери награду'}]},
+ {id:'league', a:21.0, b:25.0, img:'shots/league.png', title:'Соревнуйся<br><b>в лигах</b>', sub:'От Бронзы до Алмаза — каждую неделю',
+  focus:[585,1250], zoom:[1.0,1.07], calls:[{x:579,y:1206,at:0.9,tag:'Ты — #2'}]},
+ {id:'pass', a:25.0, b:29.5, img:'shots/pass.png', img2:'shots/pass_scroll.png', title:'<b>City Pass</b>', sub:'30 уровней наград за сезон',
+  focus:[585,900], zoom:[1.0,1.05], calls:[{x:585,y:570,at:0.7,until:2.2,tag:'Забрать всё'},{x:891,y:972,at:2.9,tag:'Премиум-награды'}]},
+];
+const root = document.getElementById('root');
+const html = [];
+// intro
+html.push('<div class="scene" id="intro"><div class="icons" id="icons"><span>☀️</span><span>⚡</span><span>🍏</span><span>💠</span><span>🔮</span></div>'+
+  '<div class="logo" id="logo" style="top:720px">GRAM CITY</div><div class="tagline" id="tagl" style="top:930px">Построй свой город на TON</div></div>');
+for (const s of SCENES) {
+  html.push('<div class="scene" id="'+s.id+'"><div class="cap"><div class="title">'+s.title+'</div><div class="sub">'+s.sub+'</div></div>'+
+   '<div class="phone"><img id="'+s.id+'-i1" src="'+s.img+'">'+(s.img2?'<img id="'+s.id+'-i2" src="'+s.img2+'" style="opacity:0">':'')+'</div>'+
+   s.calls.map((c,k)=>'<div class="ring" id="'+s.id+'-r'+k+'"></div><div class="tag" id="'+s.id+'-t'+k+'">'+c.tag+'</div>').join('')+'</div>');
+}
+html.push('<div class="scene" id="outro"><div class="logo" id="ologo" style="top:640px">GRAM CITY</div>'+
+  '<div class="tagline" id="otag" style="top:850px">Твой город ждёт</div><div class="cta" id="octa" style="top:1040px">Играй в Telegram</div>'+
+  '<div class="tagline" id="osub" style="top:1230px;font-size:40px;color:#8fb6c9">Экономическая стратегия на блокчейне TON</div></div>');
+root.innerHTML = html.join('');
+
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), ease=x=>1-Math.pow(1-clamp(x),3), io=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};
+// background: isometric island grid + glow + resource pulses (same look as the game)
+const bg=document.getElementById('bg').getContext('2d');
+const PULSES=[[.08,.22,30,.46,22,0,'#00F0FF'],[.62,.78,-30,.38,26,4,'#9B5CFF'],[.30,.58,-30,.42,24,9,'#0098EA'],[.78,.18,150,.40,28,2,'#00F0FF'],
+  [.14,.84,-30,.50,30,13,'#00F0FF'],[.88,.60,-150,.44,25,7,'#9B5CFF'],[.45,.12,30,.36,21,16,'#0098EA'],[.54,.40,150,.34,27,11,'#00F0FF']];
+function drawBg(t){
+  bg.fillStyle='#030304';bg.fillRect(0,0,1080,1920);
+  let g=bg.createRadialGradient(540,-100,0,540,-100,1500);g.addColorStop(0,'rgba(0,152,234,.16)');g.addColorStop(1,'rgba(3,3,4,0)');bg.fillStyle=g;bg.fillRect(0,0,1080,1920);
+  g=bg.createRadialGradient(900,2050,0,900,2050,1300);g.addColorStop(0,'rgba(112,0,255,.14)');g.addColorStop(1,'rgba(3,3,4,0)');bg.fillStyle=g;bg.fillRect(0,0,1080,1920);
+  const br=.55+.45*Math.sin(t*2*Math.PI/9);
+  g=bg.createRadialGradient(540,900,0,540,900,900);g.addColorStop(0,'rgba(0,152,234,'+(.10+.08*br)+')');g.addColorStop(1,'rgba(0,152,234,0)');bg.fillStyle=g;bg.fillRect(0,0,1080,1920);
+  bg.save();bg.strokeStyle='rgba(0,240,255,.07)';bg.lineWidth=2;const step=96,tan=Math.tan(Math.PI/6),off=(t*14)%step;
+  for(let c=-3000;c<4000;c+=step){bg.beginPath();bg.moveTo(0,c+off);bg.lineTo(1080,c+off+1080*tan);bg.stroke();bg.beginPath();bg.moveTo(0,c-off);bg.lineTo(1080,c-off-1080*tan);bg.stroke();}
+  bg.restore();
+  for(const [x,y,ang,d,dur,dl,col] of PULSES){
+    const ph=((t+dl)%dur)/dur, op=ph<.12?ph/.12:ph>.85?(1-ph)/.15:1, dist=ph*d*1080, a=ang*Math.PI/180;
+    const hx=x*1080+Math.cos(a)*dist, hy=y*1920+Math.sin(a)*dist;
+    bg.save();bg.globalAlpha=op*.9;const gr=bg.createLinearGradient(hx-Math.cos(a)*150,hy-Math.sin(a)*150,hx,hy);
+    gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,col);bg.strokeStyle=gr;bg.lineWidth=4;bg.beginPath();
+    bg.moveTo(hx-Math.cos(a)*150,hy-Math.sin(a)*150);bg.lineTo(hx,hy);bg.stroke();bg.shadowColor=col;bg.shadowBlur=24;bg.fillStyle=col;
+    bg.beginPath();bg.arc(hx,hy,8,0,7);bg.fill();bg.restore();
+  }
+}
+function vis(id,a,b,t,fade=.45){const e=document.getElementById(id);const o=Math.min(ease((t-a)/fade),ease((b-t)/fade));e.style.opacity=clamp(o);return clamp(o);}
+window.render=function(t){
+  drawBg(t);
+  // intro 0..3
+  const io_=vis('intro',0,3.25,t,.5);
+  const lg=document.getElementById('logo'); lg.style.transform='scale('+(0.8+0.2*ease(t/1.2))+')'; lg.style.letterSpacing=(16-12*ease(t/1.4))+'px';
+  document.getElementById('tagl').style.opacity=ease((t-.9)/.6); document.getElementById('tagl').style.transform='translateY('+(40-40*ease((t-.9)/.6))+'px)';
+  document.querySelectorAll('#icons span').forEach((s,i)=>{const ang=t*.55+i*2*Math.PI/5;s.style.left=(540+Math.cos(ang)*470-55)+'px';s.style.top=(860+Math.sin(ang)*380-55)+'px';s.style.opacity=ease((t-.2-i*.12)/.5);});
+  for(const s of SCENES){
+    const o=vis(s.id,s.a,s.b,t); if(o<=0) continue;
+    const lt=t-s.a, dur=s.b-s.a, k=clamp(lt/dur);
+    const cap=document.querySelector('#'+s.id+' .cap'); cap.style.transform='translateY('+(60-60*ease(lt/.6))+'px)';
+    const ph=document.querySelector('#'+s.id+' .phone'); ph.style.transform='translateY('+(120-120*ease(lt/.7))+'px) scale('+(0.94+0.06*ease(lt/.7))+')';
+    const z=s.zoom[0]+(s.zoom[1]-s.zoom[0])*io(k), fx=s.focus[0]*S, fy=s.focus[1]*S;
+    for(const n of ['i1','i2']){const im=document.getElementById(s.id+'-'+n); if(!im) continue; im.style.transformOrigin=fx+'px '+fy+'px'; im.style.transform='scale('+z+')';}
+    if(s.img2){ // quick swap with an upward motion = a scroll, no long double exposure
+      const sw=clamp((lt-2.4)/.28), i1=document.getElementById(s.id+'-i1'), i2=document.getElementById(s.id+'-i2');
+      i1.style.opacity=1-sw; i2.style.opacity=sw;
+      i1.style.transform='translateY('+(-70*sw)+'px) scale('+z+')'; i2.style.transform='translateY('+(70*(1-sw))+'px) scale('+z+')';
+    }
+    s.calls.forEach((c,i)=>{const r=document.getElementById(s.id+'-r'+i), tg=document.getElementById(s.id+'-t'+i);
+      // callout follows the zoom of the screenshot
+      const cx=PX+fx+(c.x*S-fx)*z, cy=PY+fy+(c.y*S-fy)*z, lc=lt-c.at, on=clamp(lc/.35)*clamp(((c.until||dur)-lt-.2)/.3);
+      const pul=.5+.5*Math.sin(lc*2*Math.PI/1.1); r.style.left=cx+'px'; r.style.top=cy+'px'; r.style.opacity=lc>0?on*(.65+.35*pul):0;
+      r.style.transform='scale('+(0.85+0.25*pul)+')'; tg.style.opacity=lc>0?on:0;
+      const right=cx>540; tg.style.left=(right?cx-80-tg.offsetWidth:cx+80)+'px'; tg.style.top=(cy-28-20*(1-ease(lc/.4)))+'px';});
+  }
+  // outro 29.5..33.5
+  const oo=vis('outro',29.5,34.5,t,.6); const lo=t-29.5;
+  document.getElementById('ologo').style.transform='scale('+(1.15-0.15*ease(lo/.8))+')';
+  document.getElementById('otag').style.opacity=ease((lo-.4)/.5);
+  const cta=document.getElementById('octa'); cta.style.opacity=ease((lo-.8)/.5); cta.style.transform='translateX(-50%) scale('+(1+.04*Math.sin(lo*2*Math.PI/1.2))+')';
+  document.getElementById('osub').style.opacity=ease((lo-1.2)/.5)*.9;
+};
+window.render(0);
+</script></body></html>

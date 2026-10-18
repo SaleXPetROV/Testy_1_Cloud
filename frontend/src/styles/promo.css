@@ -1,0 +1,73 @@
+/* === Referral Rally rainbow-modal styles === */
+@keyframes rally-rainbow-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.rally-rainbow-bg {
+  background: linear-gradient(
+    120deg,
+    #ff004c 0%,
+    #ff6a00 14%,
+    #ffe000 28%,
+    #4dff00 42%,
+    #00ffff 56%,
+    #4d4dff 70%,
+    #cc00ff 84%,
+    #ff004c 100%
+  );
+  background-size: 400% 400%;
+  animation: rally-rainbow-shift 8s ease-in-out infinite;
+}
+
+@media (max-width: 480px) {
+  .rally-rainbow-bg {
+    animation-duration: 12s;
+  }
+}
+
+.rally-glass {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.rally-shine-text {
+  background: linear-gradient(
+    90deg,
+    #fff 0%,
+    #ffe000 25%,
+    #ff004c 50%,
+    #ffe000 75%,
+    #fff 100%
+  );
+  background-size: 200% 100%;
+  animation: rally-rainbow-shift 4s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.rally-medal-1 { color: #ffd700; text-shadow: 0 0 12px rgba(255, 215, 0, 0.6); }
+.rally-medal-2 { color: #d0d0d0; text-shadow: 0 0 10px rgba(255, 255, 255, 0.4); }
+.rally-medal-3 { color: #cd7f32; text-shadow: 0 0 10px rgba(205, 127, 50, 0.6); }
+
+/* Sticky "you" row on leaderboard */
+.leaderboard-sticky-you {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: rgba(6, 8, 20, 0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(34, 211, 238, 0.35);
+  box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.4);
+}
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .leaderboard-sticky-you {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

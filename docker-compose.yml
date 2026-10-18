@@ -1,0 +1,76 @@
+# GRAM City — everything with one command:
+#   cp .env.example .env                    (public address, port, admin path)
+#   cp backend/.env.example backend/.env    (secrets)
+#   docker compose up -d --build
+# Site: http://localhost:8080   API: http://localhost:8080/api/
+# Optional LibreTranslate:  docker compose --profile translate up -d
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    # authentication ON: a root user for maintenance + a game user limited to the game DB
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?set MONGO_ROOT_PASSWORD in .env}
+      MONGO_APP_USER: ${MONGO_APP_USER:-gramcity}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD:?set MONGO_APP_PASSWORD in .env}
+      DB_NAME: ${DB_NAME:-ton_city}
+    volumes:
+      - mongo_data:/data/db
+      - ./deploy/mongo-init.js:/docker-entrypoint-initdb.d/10-app-user.js:ro
+    networks: [db]            # internal network: only the backend can reach the database
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file: ./backend/.env
+    environment:
+      MONGO_URL: mongodb://${MONGO_APP_USER:-gramcity}:${MONGO_APP_PASSWORD}@mongo:27017/${DB_NAME:-ton_city}?authSource=${DB_NAME:-ton_city}
+      DB_NAME: ${DB_NAME:-ton_city}
+      UPLOADS_ROOT: /app/uploads
+      SUPPORT_UPLOAD_DIR: /app/uploads/support
+    networks: [db, web]
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - backend_secrets:/app/secrets
+      - backend_uploads:/app/uploads        # uploaded sprites, support / announcement images survive rebuilds
+
+  frontend:
+    networks: [web]
+    build:
+      context: ./frontend
+      args:
+        # the public address of the site (nginx proxies /api and WebSockets to the backend);
+        # must be absolute — some in-app browsers reject relative WebSocket URLs
+        REACT_APP_BACKEND_URL: ${PUBLIC_URL:-http://localhost:8080}
+        REACT_APP_ADMIN_PATH: ${ADMIN_PATH:-}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+
+  libretranslate:
+    networks: [web]
+    image: libretranslate/libretranslate:latest
+    profiles: ["translate"]
+    restart: unless-stopped
+    environment:
+      LT_LOAD_ONLY: en,ru,es,zh,fr,de,ja,ko,id
+
+volumes:
+  backend_uploads: {}
+  mongo_data:
+  backend_secrets:
+
+networks:
+  db:
+    internal: true            # no route outside: the database is invisible from the internet
+  web: {}

@@ -1,0 +1,23 @@
+{
+ "helios":        {"tier":1,"fp":"1x1","ru":"Солнечная станция","aliases":["solar"]},
+ "nano_dc":       {"tier":1,"fp":"1x1","ru":"Нано-ЦОД","aliases":["data_center"]},
+ "quartz_mine":   {"tier":1,"fp":"1x1","ru":"Шахта кварца","aliases":["quartz"]},
+ "signal_tower":  {"tier":1,"fp":"1x1","ru":"Вышка трафика","aliases":["traffic_tower"]},
+ "hydro_cooling": {"tier":1,"fp":"1x1","ru":"Хладокомбинат","aliases":["cold_storage"]},
+ "bio_farm":      {"tier":1,"fp":"1x1","ru":"Биоферма","aliases":[]},
+ "scrap_yard":    {"tier":1,"fp":"1x1","ru":"Свалка","aliases":[]},
+ "chips_factory": {"tier":2,"fp":"2x2","ru":"Фабрика чипов","aliases":["chip_factory"]},
+ "nft_studio":    {"tier":2,"fp":"2x2","ru":"NFT-студия","aliases":[]},
+ "ai_lab":        {"tier":2,"fp":"2x2","ru":"ИИ-лаборатория","aliases":[]},
+ "logistics_hub": {"tier":2,"fp":"2x2","ru":"Логистический хаб","aliases":["logistics"]},
+ "cyber_cafe":    {"tier":2,"fp":"1x2","ru":"Кибер-кафе","aliases":[]},
+ "repair_shop":   {"tier":2,"fp":"1x2","ru":"Ремзона","aliases":["repair_zone"]},
+ "vr_club":       {"tier":2,"fp":"1x2","ru":"VR-клуб","aliases":[]},
+ "validator":     {"tier":3,"fp":"3x3","ru":"Валидатор","aliases":[]},
+ "gram_bank":     {"tier":3,"fp":"3x3","ru":"Банк Gram","aliases":["bank"]},
+ "dex":           {"tier":3,"fp":"3x3","ru":"DEX-биржа","aliases":[]},
+ "casino":        {"tier":3,"fp":"3x3","ru":"Казино","aliases":[]},
+ "arena":         {"tier":3,"fp":"3x3","ru":"Арена","aliases":[]},
+ "incubator":     {"tier":3,"fp":"3x3","ru":"Инкубатор","aliases":[]},
+ "bridge":        {"tier":3,"fp":"3x3","ru":"Мост","aliases":[]}
+}

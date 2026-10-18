@@ -1,0 +1,139 @@
+/* ==========================================================================
+   City background — the island's isometric grid with resources flowing on it.
+
+   Cheap by design:
+   • the grid and glow are STATIC CSS gradients (painted once);
+   • only the pulses move, and they animate transform + opacity only
+     (compositor work, no layout/repaint);
+   • animation pauses when the tab is hidden (.city-bg--paused, set from JS),
+     and is off for prefers-reduced-motion and weak devices (.city-bg--static).
+   ========================================================================== */
+
+.city-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;                 /* behind the app, above the body background */
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(0, 152, 234, 0.10) 0%, rgba(3, 3, 4, 0) 60%),
+    radial-gradient(90% 70% at 85% 110%, rgba(112, 0, 255, 0.08) 0%, rgba(3, 3, 4, 0) 60%),
+    #030304;
+}
+
+/* Isometric lattice: lines at ±30°, the same geometry as the island map.
+   Faded towards the edges so it never competes with the UI. */
+.city-bg__grid {
+  position: absolute;
+  inset: -10%;
+  background-image:
+    repeating-linear-gradient(30deg, rgba(0, 240, 255, 0.12) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(150deg, rgba(0, 240, 255, 0.12) 0 1px, transparent 1px 56px);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, #000 0%, rgba(0, 0, 0, 0.6) 60%, transparent 95%);
+          mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, #000 0%, rgba(0, 0, 0, 0.6) 60%, transparent 95%);
+}
+
+/* A slow "breathing" TON-blue glow over the island centre (opacity only). */
+.city-bg__glow {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 70vmax;
+  height: 70vmax;
+  margin: -35vmax 0 0 -35vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 152, 234, 0.22) 0%, rgba(0, 152, 234, 0) 62%);
+  animation: city-bg-breathe 18s ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes city-bg-breathe {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+/* Resource pulses: a glowing head with a short tail, travelling along an
+   isometric diagonal. Position, direction, colour and timing come from
+   per-pulse custom properties set inline by the component. */
+.city-bg__pulse {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 72px;
+  height: 2px;
+  opacity: 0;
+  transform-origin: 100% 50%;
+  animation: city-bg-travel var(--dur) linear var(--delay) infinite;
+  will-change: transform, opacity;
+}
+
+.city-bg__pulse::before {          /* tail */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--c));
+  opacity: 0.55;
+}
+
+.city-bg__pulse::after {           /* head */
+  content: "";
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 8px 2px var(--c);
+}
+
+/* --a is the travel angle (±30°), --d the distance. Rotating then translating
+   along X keeps the tail aligned with the direction of travel. */
+@keyframes city-bg-travel {
+  0%   { opacity: 0; transform: rotate(var(--a)) translateX(0); }
+  12%  { opacity: 0.9; }
+  85%  { opacity: 0.9; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--d)); }
+}
+
+/* Phones: half the pulses. */
+@media (max-width: 640px) {
+  .city-bg__pulse:nth-child(2n) { display: none; }
+}
+
+/* Tab hidden -> freeze (browsers throttle, this makes it explicit). */
+.city-bg--paused .city-bg__pulse,
+.city-bg--paused .city-bg__glow { animation-play-state: paused; }
+
+/* Reduced motion / weak device: keep the look, drop the motion. */
+.city-bg--static .city-bg__pulse { animation: none !important; opacity: 0.85; }
+.city-bg--static .city-bg__glow  { animation: none; opacity: 0.8; }
+@media (prefers-reduced-motion: reduce) {
+  .city-bg__pulse { display: none; }
+  .city-bg__glow  { animation: none; opacity: 0.8; }
+}
+
+/* Let page roots show the background. Only full-screen roots (h-screen /
+   min-h-screen) — dialogs and cards that use bg-void keep their solid fill. */
+.App.bg-void,
+.App .h-screen.bg-void,
+.App .min-h-screen.bg-void,
+.App [class*="h-[100dvh]"].bg-void,
+.App [class*="h-[100vh]"].bg-void {
+  background-color: transparent;
+}
+
+/* Softer, more blurred background on text-heavy pages (Resources, Trading,
+   Community, Marketplace, City Pass). Static filters are rasterized once;
+   the pulses are tiny, so blurring them costs next to nothing. */
+.city-bg--soft .city-bg__grid  { filter: blur(1px); }
+.city-bg--soft .city-bg__pulse { filter: blur(1px); }
+.city-bg--soft .city-bg__glow  { transform: scale(1.15); }
+.city-bg--soft::after {           /* light veil: clearly visible, but calmer than on Businesses */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 3, 4, 0.14);
+}

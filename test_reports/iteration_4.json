@@ -1,0 +1,37 @@
+{
+  "summary": "Frontend-only verification on mobile (390x800) for MyBusinessesPage: (a) active business title data-testid='active-business-name' is on the SAME top band as the side buttons biz-side-tasks / biz-side-marketplace, and (b) empty-state acquire-business-btn shows 'Открыть бизнес'/'Open business' and navigates to /maps. All 3 accounts tested via API login + token injection.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "verification_details": {
+    "admin (sanyanazarov212@gmail.com)": {
+      "title_y": 136, "title_height": 56,
+      "tasks_y": 140, "tasks_height": 56,
+      "market_y": 140, "market_height": 56,
+      "same_top_band": true, "vertical_overlap": true, "horizontally_centered": true,
+      "carousel_dots": 2, "title_changes_on_dot_click": "Signal Tower -> Bio Farm"
+    },
+    "regular (testuser@example.com)": {
+      "title_y": 136, "tasks_y": 140, "market_y": 140,
+      "same_top_band": true, "overlap": true, "centered": true, "title": "Bio Farm"
+    },
+    "empty (emptyuser@example.com)": {
+      "acquire_btn_label": "Open business",
+      "click_navigates_to": "/maps",
+      "result": "PASS"
+    }
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100%"},
+  "test_credentials": "admin, testuser, emptyuser — as per request",
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Both new changes verified on mobile 390x800. Title bounding box top (y=136, h=56) overlaps side buttons band (y=140, h=56); title horizontally centered at ~195px. Empty state 'Open business' button navigates to /maps."
+}

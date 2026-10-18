@@ -1,0 +1,100 @@
+{
+ "version": 1,
+ "parks": {
+  "1x1": [
+   {
+    "file": "park1_trees.webp",
+    "size": [
+     512,
+     512
+    ],
+    "footprint_width": 0.9395,
+    "anchor": [
+     0.5,
+     0.726
+    ],
+    "top": 0.3574
+   },
+   {
+    "file": "park1_fountain.webp",
+    "size": [
+     512,
+     512
+    ],
+    "footprint_width": 0.9395,
+    "anchor": [
+     0.5,
+     0.726
+    ],
+    "top": 0.4473
+   },
+   {
+    "file": "park1_sakura.webp",
+    "size": [
+     512,
+     512
+    ],
+    "footprint_width": 0.9395,
+    "anchor": [
+     0.5,
+     0.726
+    ],
+    "top": 0.3301
+   }
+  ],
+  "2x2": [
+   {
+    "file": "park2_fountain.webp",
+    "size": [
+     1024,
+     1024
+    ],
+    "footprint_width": 0.9404,
+    "anchor": [
+     0.5,
+     0.7267
+    ],
+    "top": 0.4141
+   },
+   {
+    "file": "park2_pond.webp",
+    "size": [
+     1024,
+     1024
+    ],
+    "footprint_width": 0.9404,
+    "anchor": [
+     0.5,
+     0.7267
+    ],
+    "top": 0.4326
+   },
+   {
+    "file": "park2_playground.webp",
+    "size": [
+     1024,
+     1024
+    ],
+    "footprint_width": 0.9404,
+    "anchor": [
+     0.5,
+     0.7267
+    ],
+    "top": 0.4551
+   },
+   {
+    "file": "park2_monument.webp",
+    "size": [
+     1024,
+     1024
+    ],
+    "footprint_width": 0.9404,
+    "anchor": [
+     0.5,
+     0.7267
+    ],
+    "top": 0.4521
+   }
+  ]
+ }
+}

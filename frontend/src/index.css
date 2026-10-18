@@ -1,0 +1,1202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 1.2%;
+  --foreground: 0 0% 93%;
+  --card: 0 0% 3.9%;
+  --card-foreground: 0 0% 93%;
+  --popover: 0 0% 3.9%;
+  --popover-foreground: 0 0% 93%;
+  --primary: 187 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 8%;
+  --secondary-foreground: 0 0% 93%;
+  --muted: 0 0% 8%;
+  --muted-foreground: 0 0% 53%;
+  --accent: 270 100% 50%;
+  --accent-foreground: 0 0% 93%;
+  --destructive: 340 100% 50%;
+  --destructive-foreground: 0 0% 93%;
+  --border: 0 0% 12%;
+  --input: 0 0% 12%;
+  --ring: 187 100% 50%;
+  --radius: 0.75rem;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  min-width: 320px; /* Minimum mobile width */
+}
+
+/* ============================================================
+   Telegram Mini App safe-area integration
+   --tg-safe-top / --tg-safe-bottom are written by useTelegramWebApp
+   hook on init and on Telegram viewport/safe-area events.
+   Outside Telegram these stay 0, so non-TG layout is untouched.
+   ============================================================ */
+:root {
+  --tg-safe-top: 0px;
+  --tg-safe-bottom: 0px;
+  --tg-safe-left: 0px;
+  --tg-safe-right: 0px;
+}
+
+/* When the SDK marks us as running inside Telegram, we DON'T pad the body
+   (that creates a flat strip of bare body bg-color above the page's own
+   gradient/glass background). Instead, individual page roots opt-in via
+   the `.tg-pad-top` utility (or via inline `paddingTop: var(--tg-safe-top)`)
+   AND each page's full-bleed background layer is extended upward by
+   `var(--tg-safe-top)` so it visually flows behind Telegram's chrome
+   ("Закрыть", "˅", "⋮") without exposing a blank gap. */
+
+/* Sticky/fixed elements (mobile bottom nav, headers) should also respect
+   the inset — convenience utilities. */
+.tg-pad-top    { padding-top: var(--tg-safe-top); }
+.tg-pad-bottom { padding-bottom: var(--tg-safe-bottom); }
+.tg-mt         { margin-top: var(--tg-safe-top); }
+
+/* Page-header alignment helper.
+   Inside a Telegram Mini App the fixed mobile burger button sits at
+   `top: var(--tg-safe-top) + 0.75rem` and is 2.5rem tall. Apply
+   `.tg-header-pad` to a page's <header> / top row so its content
+   row lines up vertically with the burger, no matter which page it is.
+   Outside Mobile / outside Telegram the rule collapses to a normal
+   `py-4` (default Tailwind-friendly) so desktop layouts stay intact. */
+.tg-header-pad {
+  padding-top: calc(var(--tg-safe-top, 0px) + 0.75rem);
+  padding-bottom: 0;
+}
+/* Force the inner flex row to match the burger button height (2.5rem)
+   so its vertical center always lines up with the burger center —
+   regardless of whether the row contains a small text-only title or
+   a tall icon+button. Applies to direct flex children on mobile only. */
+@media (max-width: 1023px) {
+  .tg-header-pad > .flex,
+  .tg-header-pad > div > .flex:first-child {
+    min-height: 2.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .tg-header-pad {
+    padding-top: 1rem;         /* small but visible breathing room on desktop */
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* Extend a page's full-bleed background layer (typically `.hero-futurism`
+   or any `absolute inset-0` element) upward by the Telegram safe-area top,
+   so the gradient flows under Telegram's overlay chrome. Apply by adding
+   the class `.tg-bleed-top` to the absolute background element. */
+html.is-telegram .tg-bleed-top {
+  top: calc(-1 * var(--tg-safe-top));
+}
+
+/* Telegram top-fill bar — invisible outside Telegram, otherwise paints a
+   subtle dark blur strip exactly the height of the safe-area inset so the
+   "Закрыть/˅/⋮" buttons sit on a coherent surface. Drop a single
+   <div className="tg-top-fill" /> at the root of any layout. */
+.tg-top-fill {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0; /* hidden by default */
+  pointer-events: none;
+  z-index: 55;
+  background: linear-gradient(180deg, rgba(5,6,10,0.92) 0%, rgba(5,6,10,0.55) 70%, rgba(5,6,10,0) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+html.is-telegram .tg-top-fill {
+  height: var(--tg-safe-top);
+}
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
+  background-color: #030304;
+  color: #EDEDED;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Hide scrollbar globally */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Constrain the Radix ScrollArea viewport on the Tasks page. Radix wraps the
+   content in a div with display:table + min-width:100% (to allow horizontal
+   scroll); on mobile that makes children size to intrinsic content width and
+   the page overflows. Force block layout so children are viewport-width. */
+.tasks-scroll [data-radix-scroll-area-viewport] > div {
+  display: block !important;
+  min-width: 100% !important;
+  width: 100% !important;
+}
+
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0C;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1F1F22;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00F0FF;
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 240, 255, 0.3);
+  color: #EDEDED;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Unbounded', sans-serif;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+/* Mono text for data */
+.font-mono, code, .data-value {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Glass panels */
+.glass-panel {
+  background: rgba(10, 10, 12, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-hover:hover {
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+/* Glow effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+.glow-cyan-strong {
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+/* Noise overlay */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Scanline effect */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1) 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+}
+
+/* Button styles */
+.btn-cyber {
+  background: linear-gradient(135deg, #00F0FF 0%, #0080FF 100%);
+  color: #000;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.btn-cyber:hover {
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn-ton {
+  background: #0098EA;
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+}
+
+.btn-ton:hover {
+  background: #0080C8;
+  box-shadow: 0 0 20px rgba(0, 152, 234, 0.4);
+}
+
+/* Input styles */
+input, textarea, select {
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* Card hover */
+.card-hover {
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+/* Grid cell */
+.grid-cell {
+  transition: all 0.15s ease;
+}
+
+.grid-cell:hover {
+  stroke: #00F0FF;
+  stroke-width: 2;
+}
+
+.grid-cell.owned {
+  fill: rgba(0, 240, 255, 0.2);
+}
+
+.grid-cell.owned-self {
+  fill: rgba(0, 240, 255, 0.4);
+}
+
+.grid-cell.has-business {
+  stroke: #FFD600;
+  stroke-width: 1;
+}
+
+/* Animation utilities */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.2s ease-out forwards;
+}
+
+/* TON Connect button override */
+[data-tc-connect-button] {
+  font-family: 'Rajdhani', sans-serif !important;
+  font-weight: 700 !important;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  [data-debug-wrapper="true"] {
+    display: contents !important;
+  }
+}
+
+/* ============================================================
+   Landing Hi-Tech Futurism background — LIGHTWEIGHT
+   Static gradients, no animations on mobile, GPU-friendly
+   ============================================================ */
+
+.hero-futurism {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* Lightweight base — renders instantly, improves LCP */
+  background:
+    radial-gradient(ellipse 70% 35% at 12% 5%,   rgba(122, 46, 255, 0.30), transparent 60%),
+    radial-gradient(ellipse 60% 30% at 88% 18%,  rgba(34, 226, 255, 0.28), transparent 60%),
+    radial-gradient(ellipse 55% 25% at 8% 48%,   rgba(34, 226, 255, 0.22), transparent 65%),
+    radial-gradient(ellipse 60% 30% at 92% 55%,  rgba(122, 46, 255, 0.25), transparent 65%),
+    radial-gradient(ellipse 60% 28% at 18% 80%,  rgba(122, 46, 255, 0.22), transparent 65%),
+    radial-gradient(ellipse 55% 28% at 82% 92%,  rgba(34, 226, 255, 0.22), transparent 65%),
+    radial-gradient(ellipse 80% 40% at 50% 38%,  rgba(59, 123, 255, 0.14), transparent 70%),
+    linear-gradient(180deg,
+      #07091A 0%,
+      #0B0A2A 25%,
+      #0A0F2E 50%,
+      #110C2E 75%,
+      #07091A 100%);
+  /* Browser optimization: isolate this layer's repaints */
+  contain: layout style paint;
+}
+
+/* ============================================================
+   Lazy fade-in wrapper for HEAVY decorative effects
+   - Solid base (hero-futurism) paints first
+   - Heavy layers fade in 250ms after page load → smoother LCP
+   ============================================================ */
+.bg-fx-lazy {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  animation: bgFxFadeIn 900ms ease-out 250ms forwards;
+  contain: layout style paint;
+}
+@keyframes bgFxFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-fx-lazy { animation: none; opacity: 1; }
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(34, 226, 255, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122, 46, 255, 0.08) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.85) 100%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.85) 100%);
+}
+
+.hero-glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(45px);
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+@keyframes orbDrift {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(20px, -10px); }
+}
+@keyframes orbDrift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-25px, 14px) scale(1.06); }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .hero-glow-orb { animation: orbDrift 18s ease-in-out infinite; }
+  .hero-glow-orb:nth-of-type(odd) { animation-name: orbDrift2; animation-duration: 22s; }
+}
+
+/* --- Title pulse-glow (desktop only) --- */
+@keyframes titlePulse {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(34, 226, 255, 0.0)); }
+  50%      { filter: drop-shadow(0 0 14px rgba(34, 226, 255, 0.55)); }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .neon-title { animation: titlePulse 4.5s ease-in-out infinite; }
+}
+
+/* --- Floating ambient dots layer (desktop only) --- */
+.ambient-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 22%, rgba(34, 226, 255, 0.55), transparent 60%),
+    radial-gradient(1.2px 1.2px at 78% 18%, rgba(122, 46, 255, 0.55), transparent 60%),
+    radial-gradient(1px 1px at 35% 70%, rgba(34, 226, 255, 0.45), transparent 60%),
+    radial-gradient(1.4px 1.4px at 88% 65%, rgba(59, 123, 255, 0.55), transparent 60%),
+    radial-gradient(1px 1px at 22% 88%, rgba(122, 46, 255, 0.4), transparent 60%);
+  background-size: 100% 100%;
+  opacity: 0;
+}
+@keyframes ambientFloat {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0.55; }
+  50%  { transform: translate3d(8px, -6px, 0); opacity: 0.85; }
+  100% { transform: translate3d(0, 0, 0); opacity: 0.55; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .ambient-dots { animation: ambientFloat 14s ease-in-out infinite; opacity: 0.7; }
+}
+@media (max-width: 1023px) {
+  .ambient-dots { display: none; } /* zero cost on phones */
+}
+
+/* ============================================================
+   Auth-form accent — driven by --auth-acc set on form wrapper.
+   In login mode  --auth-acc = #22E2FF  (same hue as cyan crystal)
+   In register    --auth-acc = #C29BFF  (same hue as purple crystal)
+   Every accent element in the form reads from this single var,
+   so UI + crystal are always in perfect colour sync.
+   ============================================================ */
+.auth-acc         { color: var(--auth-acc); }
+.auth-acc-soft    { color: color-mix(in srgb, var(--auth-acc) 70%, transparent); }
+.auth-acc-bg      { background-color: var(--auth-acc); }
+.auth-acc-bg-dim  { background-color: color-mix(in srgb, var(--auth-acc) 10%, transparent); }
+.auth-acc-border      { border-color: var(--auth-acc); }
+.auth-acc-border-soft { border-color: color-mix(in srgb, var(--auth-acc) 25%, transparent); }
+.auth-acc-shadow  { box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--auth-acc) 40%, transparent); }
+.auth-input { transition: border-color .18s ease, box-shadow .18s ease; }
+.auth-input:focus,
+.auth-input:focus-visible {
+  border-color: var(--auth-acc);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--auth-acc) 28%, transparent);
+  outline: none;
+}
+/* Hide native browser password reveal icons (Edge/IE black eye + WebKit/Chromium reveal/caps-lock indicators) so only our custom Eye/EyeOff toggle is visible. */
+.auth-input::-ms-reveal,
+.auth-input::-ms-clear { display: none; width: 0; height: 0; }
+.auth-input::-webkit-credentials-auto-fill-button,
+.auth-input::-webkit-strong-password-auto-fill-button,
+.auth-input::-webkit-caps-lock-indicator { visibility: hidden !important; display: none !important; pointer-events: none !important; }
+.auth-link { color: var(--auth-acc); text-decoration: underline; transition: opacity .15s ease; }
+.auth-link:hover { opacity: .8; color: #FFFFFF; }
+
+/* Hologram (desktop only) — pure CSS/SVG, no JS rotation */
+.holo-frame {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  aspect-ratio: 1 / 1;
+  margin-inline: auto;
+  /* default theme: cyan */
+  --holo-1: #22E2FF;
+  --holo-2: #7A2EFF;
+  --holo-3: #3B7BFF;
+  /* Performance: isolate paint/layout so the heavy SVG (filters, blurs,
+     drop-shadows, 10+ keyframe animations) cannot trigger repaints on the
+     rest of the page, and force the whole frame onto its own GPU layer so
+     the browser doesn't re-rasterise it when the user scrolls past and
+     back. Eliminates the visible judder on rapid scroll. */
+  contain: layout style paint;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* When offscreen, freeze every keyframe animation inside the hologram —
+   nothing is running in the background, so re-entering view is instant
+   instead of needing to re-rasterise multiple animation frames at once. */
+.holo-paused .holo-svg,
+.holo-paused .holo-scan,
+.holo-paused .holo-dot,
+.holo-paused .globe-rotate,
+.holo-paused .globe-orbit-slow,
+.holo-paused .globe-orbit-rev,
+.holo-paused .globe-pulse,
+.holo-paused .globe-link,
+.holo-paused .crystal-float,
+.holo-paused .crystal-spin,
+.holo-paused .crystal-sparkle,
+.holo-paused .crystal-core-pulse,
+.holo-paused .crystal-breathe,
+.holo-paused .sat-orbit,
+.holo-paused .sat-orbit-rev,
+.holo-paused .forge-beam {
+  animation-play-state: paused !important;
+}
+.holo-frame-xl {
+  max-width: 580px;
+}
+.holo-theme-cyan {
+  --holo-1: #22E2FF;
+  --holo-2: #3B7BFF;
+  --holo-3: #5BC0FF;
+}
+.holo-theme-purple {
+  --holo-1: #C29BFF;
+  --holo-2: #7A2EFF;
+  --holo-3: #A66BFF;
+}
+.holo-theme-purple .holo-svg {
+  filter: drop-shadow(0 0 22px rgba(122, 46, 255, 0.45));
+}
+.holo-theme-purple.holo-frame::before {
+  background: radial-gradient(circle, rgba(122, 46, 255, 0.22) 0%, transparent 65%);
+}
+.holo-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 226, 255, 0.18) 0%, transparent 65%);
+  filter: blur(20px);
+}
+
+/* --- Pulse glow ring around CTA button --- */
+@keyframes ctaPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 226, 255, 0.45), 0 0 30px rgba(34, 226, 255, 0.25); }
+  50%      { box-shadow: 0 0 0 12px rgba(34, 226, 255, 0.0), 0 0 35px rgba(34, 226, 255, 0.45); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cta-pulse { animation: ctaPulse 2.4s ease-in-out infinite; }
+}
+@media (max-width: 640px) {
+  .cta-pulse { animation: none !important; }
+}
+
+/* ============================================================
+   Globe hologram animations (desktop only)
+   ============================================================ */
+@keyframes globeRotate {
+  from { transform: rotateY(0); }
+  to   { transform: rotateY(360deg); }
+}
+@keyframes globeSpinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes globeSpinRev {
+  from { transform: rotate(360deg); }
+  to   { transform: rotate(0deg); }
+}
+@keyframes satOrbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes satOrbitRev {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes nodePulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50%      { transform: scale(1.4); opacity: 1; }
+}
+@keyframes linkFlow {
+  0%, 100% { stroke-dashoffset: 0; opacity: 0.3; }
+  50%      { stroke-dashoffset: -20; opacity: 1; }
+}
+
+
+/* Register-mode "building up" — staggered scale-in + pulse */
+@keyframes nodeBuild {
+  0%   { transform: scale(0); opacity: 0; }
+  60%  { transform: scale(1.6); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.85; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .globe-build-1, .globe-build-2, .globe-build-3,
+  .globe-build-4, .globe-build-5, .globe-build-6 {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: nodeBuild 4.5s ease-out infinite;
+  }
+  .globe-build-1 { animation-delay: 0.0s; }
+  .globe-build-2 { animation-delay: 0.6s; }
+  .globe-build-3 { animation-delay: 1.2s; }
+  .globe-build-4 { animation-delay: 1.8s; }
+  .globe-build-5 { animation-delay: 2.4s; }
+  .globe-build-6 { animation-delay: 3.0s; }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .globe-rotate     { animation: globeRotate 32s linear infinite; transform-origin: 200px 200px; }
+  .globe-orbit-slow { animation: globeSpinSlow 24s linear infinite; transform-origin: 200px 200px; }
+  .globe-orbit-rev  { animation: globeSpinRev 30s linear infinite; transform-origin: 200px 200px; }
+  .sat-orbit        { animation: satOrbit 9s linear infinite; transform-origin: 200px 200px; }
+  .sat-orbit-rev    { animation: satOrbitRev 14s linear infinite; transform-origin: 200px 200px; }
+  .globe-pulse      { transform-box: fill-box; transform-origin: center; animation: nodePulse 2s ease-in-out infinite; }
+  .globe-link       { stroke-dasharray: 10 6; animation: linkFlow 2.5s ease-in-out infinite; }
+}
+
+/* ============================================================
+   Background extra liveness — data streams + slow pulse wave
+   ============================================================ */
+.bg-streams {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: repeating-linear-gradient(
+    115deg,
+    transparent 0,
+    transparent 92px,
+    rgba(34, 226, 255, 0.05) 92px,
+    rgba(34, 226, 255, 0.05) 93px,
+    transparent 93px,
+    transparent 200px
+  );
+  background-size: 400px 400px;
+  opacity: 0;
+}
+@keyframes streamsMove {
+  0%   { background-position: 0 0; opacity: 0.7; }
+  50%  { opacity: 0.95; }
+  100% { background-position: 400px -400px; opacity: 0.7; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .bg-streams { animation: streamsMove 30s linear infinite; opacity: 0.85; }
+}
+@media (max-width: 1023px) {
+  .bg-streams { display: none; }
+}
+
+.bg-pulse-wave {
+  position: absolute;
+  inset: -25%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 60%,
+    rgba(34, 226, 255, 0.0) 0%,
+    rgba(34, 226, 255, 0.0) 30%,
+    rgba(34, 226, 255, 0.06) 38%,
+    rgba(34, 226, 255, 0.0) 46%,
+    transparent 70%);
+  opacity: 0;
+}
+@keyframes pulseWave {
+  0%   { transform: scale(0.7); opacity: 0; }
+  40%  { opacity: 0.9; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .bg-pulse-wave { animation: pulseWave 7s ease-out infinite; }
+}
+@media (max-width: 1023px) {
+  .bg-pulse-wave { display: none; }
+}
+
+
+.holo-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 18px rgba(34, 226, 255, 0.35));
+}
+
+/* Parallax tilt — JS hook sets --tx/--ty (deg) and --px/--py (px) */
+.holo-tilt {
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  /* No CSS transition — rAF + lerp inside the hook is already smooth. */
+  /* A transition here would *fight* against the rAF loop and feel laggy.   */
+  transform:
+    translate3d(var(--px, 0px), var(--py, 0px), 0)
+    rotateY(var(--tx, 0deg))
+    rotateX(var(--ty, 0deg));
+  will-change: transform;
+}
+/* Inner SVG sits forward in 3D space so rotation feels deeper */
+.holo-tilt > .holo-svg {
+  transform: translateZ(40px);
+  transform-style: preserve-3d;
+}
+@media (max-width: 1023px), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .holo-tilt { transform: none !important; perspective: none; }
+  .holo-tilt > .holo-svg { transform: none !important; }
+}
+
+@keyframes holoFloatY {
+  0%, 100% { transform: translate3d(0, 0, 40px); }
+  50%      { transform: translate3d(0, -8px, 40px); }
+}
+@keyframes holoScan {
+  0%   { transform: translateY(-90px); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(90px); opacity: 0; }
+}
+@keyframes holoPulseDot {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .holo-svg     { animation: holoFloatY 6s ease-in-out infinite; }
+  .holo-scan    { animation: holoScan 3.2s linear infinite; }
+  .holo-dot     { animation: holoPulseDot 2.5s ease-in-out infinite; }
+}
+
+/* On mobile: kill heavy effects. Hide hologram entirely. */
+@media (max-width: 1023px) {
+  .holo-frame { display: none; }
+  .hero-glow-orb { filter: blur(30px); }
+}
+
+@media (max-width: 640px) {
+  .hero-grid { background-size: 44px 44px; opacity: 0.55; }
+  .hero-glow-orb { display: none; }
+}
+
+
+/* ============================================================
+   TON Crystal hologram animations (desktop only)
+   ============================================================ */
+@keyframes crystalFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes crystalSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes crystalSparkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.6); }
+  50%      { opacity: 1;   transform: scale(1.4); }
+}
+@keyframes crystalCorePulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50%      { opacity: 1;   transform: scale(1.15); }
+}
+@keyframes crystalBreathe {
+  0%, 100% { opacity: 0.25; transform: scale(0.95); }
+  50%      { opacity: 0.55; transform: scale(1.05); }
+}
+@keyframes forgeBeam {
+  0%   { opacity: 0; stroke-dashoffset: 50; }
+  30%  { opacity: 1; }
+  100% { opacity: 0; stroke-dashoffset: 0; }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .crystal-float    { animation: crystalFloat 5s ease-in-out infinite; }
+  .crystal-spin     { animation: crystalSpin 22s linear infinite; }
+  .crystal-sparkle  { transform-box: fill-box; transform-origin: center; animation: crystalSparkle 1.8s ease-in-out infinite; }
+  .crystal-core-pulse { transform-box: fill-box; transform-origin: center; animation: crystalCorePulse 2.4s ease-in-out infinite; }
+  .crystal-breathe  { transform-box: fill-box; transform-origin: center; animation: crystalBreathe 3.5s ease-in-out infinite; }
+  .forge-beam       { stroke-dasharray: 10 6; animation: forgeBeam 2s ease-out infinite; }
+}
+
+
+
+/* ============================================================
+   Performance optimisations (Landing + Map + Sidebar)
+   ============================================================
+   The landing page and the cities map were stuttering on tablet/mobile and
+   even bleeding into Sidebar interactions because of multiple expensive
+   composited layers (blur, mask-image, radial gradients, framer-motion
+   stagger). The rules below cut GPU/CPU cost without changing the visual
+   identity on desktop. */
+
+/* Promote heavy decorative layers to their own GPU layer and isolate
+   their paints from neighbours so they never invalidate Sidebar / cards. */
+.hero-futurism,
+.bg-fx-lazy,
+.hero-grid,
+.hero-glow-orb,
+.bg-pulse-wave,
+.ambient-dots {
+  contain: strict;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduce blur radius — `filter: blur()` is the single most expensive
+   property in CSS. 30px is visually almost identical to 45px but renders
+   ~2× faster on integrated GPUs. */
+.hero-glow-orb { filter: blur(30px); }
+
+/* On phones we already hide most effects above, but the base gradient
+   `.hero-futurism` still gets repainted on every scroll inside Mini App
+   (the iOS-style address bar resizes the viewport). Pin it so it
+   composites once and stays static. */
+.hero-futurism {
+  position: absolute;
+  inset: 0;
+  contain: strict;
+}
+
+/* On any screen smaller than desktop, kill the most expensive layers
+   outright — they're below 5% opacity anyway. */
+@media (max-width: 1023px) {
+  .ambient-dots,
+  .bg-pulse-wave,
+  .hero-glow-orb { display: none !important; }
+  .hero-grid     { opacity: 0.35; mask-image: none; -webkit-mask-image: none; }
+}
+
+/* MapPage background grid — we apply it inline in JSX with two stacked
+   linear-gradients, which forces a paint on every animation frame.
+   Replace with a SINGLE static layer when the user opts into
+   `prefers-reduced-motion` and disable on small screens. */
+@media (max-width: 1023px) {
+  [data-testid="maps-page"] .absolute.inset-0.opacity-5 { display: none; }
+}
+
+/* Lift below-the-fold cards out of the paint loop until they scroll into
+   view — works for both Landing feature cards and Map city cards.
+   `content-visibility: auto` is an instant 30–60 % paint reduction on
+   long pages; the `contain-intrinsic-size` reserves layout so scroll
+   anchoring stays smooth. */
+.card-perf,
+.landing-card,
+.map-city-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 320px;
+}
+
+/* Force GPU compositing on framer-motion children so transforms don't
+   trigger layout. */
+[data-framer-motion],
+.motion-perf {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* Honour reduce-motion: disable every decorative animation. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow-orb,
+  .ambient-dots,
+  .bg-pulse-wave,
+  .hero-grid,
+  .neon-title { animation: none !important; }
+}
+
+
+/* ============================================================
+ * v2.1.5 — Legendary T3 resource card shimmer
+ * Heavy-duty visual: a slow, looping holographic gradient that
+ * makes Tier-3 resource tiles feel legendary. GPU-only (background-
+ * position translation, no layout). Respects reduced-motion.
+ * ============================================================ */
+/* `position: relative` is needed so the ::before overlay positions
+ * correctly. We declare it inside @layer components so Tailwind utility
+ * classes (like `fixed` on Radix DialogContent) still override it.
+ * Without the layer, the source order alone makes `.legendary-gradient`
+ * win over `.fixed`, breaking modals that use this class. */
+@layer components {
+  .legendary-gradient {
+    position: relative;
+    background:
+      linear-gradient(
+        135deg,
+        rgba(122, 46, 255, 0.55) 0%,
+        rgba(34, 226, 255, 0.55) 25%,
+        rgba(255, 184, 0, 0.55) 50%,
+        rgba(255, 46, 170, 0.55) 75%,
+        rgba(122, 46, 255, 0.55) 100%
+      );
+    background-size: 300% 300%;
+    animation: legendary-shimmer 8s ease-in-out infinite;
+    isolation: isolate;
+  }
+}
+.legendary-gradient::before {
+  /* Inner overlay so text stays legible while the gradient glows around */
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: rgba(7, 7, 12, 0.72);
+  z-index: 0;
+}
+/* Inner content gets z-index so it paints above the ::before overlay.
+ * Use `:not(.absolute)` so children that opted into Tailwind's
+ * `absolute` class keep their own positioning (e.g. corner badges). */
+.legendary-gradient > *:not(.absolute) {
+  position: relative;
+  z-index: 1;
+}
+.legendary-gradient > .absolute {
+  z-index: 2;
+}
+@keyframes legendary-shimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .legendary-gradient { animation: none; }
+}
+/* Slow spin used by HowItWorksFlow "Produce" cog */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 6s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow { animation: none; }
+}
+
+/* Hide native number-input spinner arrows (used by .no-spinner inputs) */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spinner {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ── Referral card: legendary T3-style gradient border + shimmer ── */
+@keyframes referralShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.referral-legendary {
+  background: linear-gradient(120deg, #00E5FF, #7A2EFF, #00E5FF, #22E2FF);
+  background-size: 300% 300%;
+  animation: referralShimmer 6s ease-in-out infinite;
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.25), 0 0 60px rgba(122, 46, 255, 0.15);
+}
+.referral-legendary__inner {
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(0, 229, 255, 0.12), transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, rgba(122, 46, 255, 0.14), transparent 55%),
+    #0a0e14;
+}
+
+/* ── Custom turquoise scrollbar for referral list ── */
+.referral-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #00E5FF rgba(255, 255, 255, 0.06);
+}
+.referral-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.referral-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+.referral-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00E5FF, #22E2FF);
+  border-radius: 8px;
+}
+.referral-scroll::-webkit-scrollbar-thumb:hover {
+  background: #00E5FF;
+}
+
+/* ── Gold blinking label for the "Tasks" (Задания) nav item ── */
+@keyframes goldBlink {
+  0%   { color: #ffd24a; text-shadow: 0 0 2px rgba(255, 200, 60, 0.35); }
+  50%  { color: #fff2b0; text-shadow: 0 0 12px rgba(255, 200, 60, 0.95); }
+  100% { color: #ffd24a; text-shadow: 0 0 2px rgba(255, 200, 60, 0.35); }
+}
+.gold-blink {
+  animation: goldBlink 1.6s ease-in-out infinite;
+  font-weight: 800;
+}
+
+/* ── Rich-text (game rules) content rendering ── */
+.rte-content:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+.rte-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 8px 0;
+  display: block;
+}
+.rte-content a { color: #22e2ff; text-decoration: underline; }
+.rte-content b, .rte-content strong { font-weight: 700; }
+.rte-content ul, .rte-content ol { padding-left: 1.25rem; list-style: revert; }
+.rte-content p { margin: 0 0 0.5rem; }
+
+/* ── Mobile bottom navigation: reserve space so it never covers content ── */
+@media (max-width: 1023px) {
+  :root {
+    --bottom-nav-h: 46px;
+  }
+  /* Opt-in utility: pages that scroll in normal flow add this to their root
+     so their last elements clear the floating bottom nav. Full-height
+     (h-screen) pages like chat/map must NOT use it — they handle their own
+     bottom bar spacing to avoid pushing the whole page into a scroll. */
+  .pb-bottom-nav {
+    padding-bottom: calc(var(--bottom-nav-h, 46px) + 20px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+
+/* ── Экран «Бизнес»: адаптивная картинка бизнеса ──────────────────────────
+   Высота картинки ограничена одновременно высотой её флекс-контейнера
+   (100%) и вьюпорт-кэпом (…vh) через min(), поэтому картинка никогда не
+   вылезает за свой блок и не перекрывает название/статус, а на низких
+   экранах пропорционально уменьшается. Правила:
+   • ширина > 400px → картинка немного увеличивается
+   • высота < 750px → картинка пропорционально уменьшается (правила высоты
+     идут ниже правил ширины, поэтому на низких экранах выигрывают). */
+.biz-skin-img {
+  max-height: min(100%, 34vh);
+  height: auto;
+  width: auto;
+  max-width: 78%;
+  object-fit: contain;
+}
+@media (min-width: 400px) {
+  .biz-skin-img {
+    max-height: min(100%, 40vh);
+    max-width: 84%;
+  }
+}
+@media (max-height: 750px) {
+  .biz-skin-img { max-height: min(100%, 28vh); }
+}
+@media (max-height: 680px) {
+  .biz-skin-img { max-height: min(100%, 23vh); }
+}
+@media (max-height: 600px) {
+  .biz-skin-img { max-height: min(100%, 18vh); }
+}
+
+
+/* ── Экран «Бизнес»: лёгкое «дыхание»/парение арта ─────────────────────────
+   Плавно поднимает и чуть увеличивает картинку, чтобы экран выглядел живым.
+   Отключается для пользователей с prefers-reduced-motion. */
+@keyframes bizArtFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-3%) scale(1.02); }
+}
+.biz-art-float {
+  animation: bizArtFloat 4.5s ease-in-out infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .biz-art-float { animation: none; }
+}
+
+/* ── Экран «Бизнес»: светящаяся «живая» кнопка «Открыть бизнес» ────────────── */
+@keyframes bizOpenGlow {
+  0%, 100% {
+    box-shadow: 0 0 14px rgba(34,211,238,0.35), 0 0 30px rgba(168,85,247,0.22);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 26px rgba(34,211,238,0.65), 0 0 58px rgba(168,85,247,0.45);
+    transform: scale(1.035);
+  }
+}
+.biz-open-glow {
+  animation: bizOpenGlow 2.4s ease-in-out infinite;
+  will-change: transform, box-shadow;
+  border-radius: 1.5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .biz-open-glow { animation: none; }
+}
+
+
+/* «Задания» button on My Businesses: a CALM, slow glow while rewards wait to be
+   claimed (3.2 s cycle, soft amplitude — deliberately slower than the badge). */
+@keyframes tasks-calm-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.0), 0 0 6px 0 rgba(0, 240, 255, 0.15); }
+  50%      { box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.18), 0 0 18px 2px rgba(0, 240, 255, 0.35); }
+}
+.tasks-calm-pulse {
+  animation: tasks-calm-pulse 3.2s ease-in-out infinite;
+  border-color: rgba(0, 240, 255, 0.6) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tasks-calm-pulse { animation: none; box-shadow: 0 0 14px 2px rgba(0, 240, 255, 0.3); }
+}
+
+/* the button a quest points to: gold pulse for a few seconds after the jump */
+@keyframes quest-highlight-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 216, 77, 0.0), 0 0 0 2px rgba(255, 216, 77, 0.9); }
+  50%      { box-shadow: 0 0 0 8px rgba(255, 216, 77, 0.25), 0 0 22px 4px rgba(255, 216, 77, 0.7); }
+}
+.quest-highlight { animation: quest-highlight-pulse 1.1s ease-in-out infinite; border-radius: 12px; position: relative; z-index: 5; }
+@media (prefers-reduced-motion: reduce) { .quest-highlight { animation: none; box-shadow: 0 0 0 3px #ffd84d, 0 0 18px 4px rgba(255, 216, 77, 0.6); } }
+
+/* mini-game rewards: chest shake + reward cards appearing */
+@keyframes wiggle { 0%, 100% { transform: rotate(-8deg) scale(1.05); } 50% { transform: rotate(8deg) scale(1.12); } }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: none; } }
+
+/* mini-game: the time bar of the current item — one CSS animation per item (smooth, no React re-render per frame) */
+@keyframes mgTimebar {
+  0%   { transform: scaleX(1);    background: #39ff88; }
+  60%  { transform: scaleX(0.4);  background: #39ff88; }
+  80%  { transform: scaleX(0.2);  background: #ffd84d; }
+  100% { transform: scaleX(0);    background: #ff3b5c; }
+}
+.mg-timebar { animation-name: mgTimebar; animation-timing-function: linear; animation-fill-mode: both; will-change: transform; }
+
+/* tier-3 («legendary») resources: an iridescent, slowly shifting background (Resources page, boosters, modal) */
+@keyframes resLegendShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+.res-legendary {
+  background: linear-gradient(120deg, rgba(255, 196, 0, 0.28), rgba(255, 64, 196, 0.26), rgba(110, 90, 255, 0.28), rgba(0, 230, 255, 0.24), rgba(255, 196, 0, 0.28));
+  background-size: 300% 300%;
+  animation: resLegendShift 6s ease-in-out infinite;
+  border: 1px solid rgba(255, 210, 120, 0.55) !important;
+  box-shadow: 0 0 14px rgba(255, 180, 80, 0.25), inset 0 0 12px rgba(255, 255, 255, 0.06);
+}
+.res-legendary-frame {
+  background: linear-gradient(120deg, #ffc400, #ff40c4, #6e5aff, #00e6ff, #ffc400);
+  background-size: 300% 300%;
+  animation: resLegendShift 6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) { .res-legendary, .res-legendary-frame { animation: none; } }
+
+/* «Бизнесы»: the consumption chip blinks red while an input is missing */
+@keyframes resShortBlink {
+  0%, 100% { border-color: rgba(248, 113, 113, 0.9); box-shadow: 0 0 16px rgba(248, 113, 113, 0.45); background-color: rgba(127, 29, 29, 0.35); }
+  50%      { border-color: rgba(248, 113, 113, 0.25); box-shadow: 0 0 2px rgba(248, 113, 113, 0.05); background-color: rgba(0, 0, 0, 0.4); }
+}
+.res-shortage { animation: resShortBlink 1.1s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .res-shortage { animation: none; border-color: rgba(248, 113, 113, 0.9); } }

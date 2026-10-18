@@ -1,0 +1,69 @@
+================================================================================
+TASK 2: FRONTEND MAP - CODE REVIEW RESULTS
+================================================================================
+
+File: /app/frontend/src/engine/IsometricMapEngine.js
+Method: setupAllTiles (lines 674-725)
+
+VERIFICATION CHECKLIST:
+-----------------------
+
+✅ a) Reconciliation block present exactly once at end of setupAllTiles
+   Location: Lines 712-724
+   Position: Right before the closing brace of the method (line 725)
+   
+   Code snippet:
+   ```javascript
+   // Post-setup reconciliation — safeguards against a race between the async
+   // texture/avatar loading above and concurrent store dispatches (SET_CELLS
+   // re-fetch, SET_USER on user prop change, WebSocket cell_update, …).
+   // If any cell in the *current* store state has a building/owner but is
+   // missing its sprite in the pool, run the incremental path for it now so
+   // the map isn't left with a blank state that only fills in after the user
+   // interacts. `updateCell` is idempotent — a no-op when the sprite already
+   // matches the cell data.
+   try {
+     const finalState = mapStore.getState();
+     for (const cell of finalState.cells.values()) {
+       const key = `${cell.q},${cell.r}`;
+       const hasBuilding = this.buildingPool.has(key);
+       const wantsBuilding = !!cell.building;
+       const hasAvatar = this.avatarPool.has(key);
+       const wantsAvatar = !!cell.owner;
+       if (hasBuilding !== wantsBuilding || hasAvatar !== wantsAvatar) {
+         this.updateCell(cell, finalState);
+       }
+     }
+   } catch (_e) { /* defensive: never let reconciliation break the render */ }
+   ```
+
+✅ b) Only calls updateCell when pool disagrees with cell data
+   Lines 716-722 show the conditional logic:
+   - Checks if buildingPool.has(key) !== !!cell.building
+   - Checks if avatarPool.has(key) !== !!cell.owner
+   - Only calls updateCell when there's a mismatch
+   - Does NOT unconditionally re-render every cell
+
+✅ c) Wrapped in try/catch for safety
+   Line 712: try {
+   Line 724: } catch (_e) { /* defensive: never let reconciliation break the render */ }
+   
+   The catch block is defensive and prevents reconciliation failures from
+   breaking the map render.
+
+CONCLUSION:
+-----------
+✅ All requirements met. The fix is correctly implemented as specified.
+
+The reconciliation block:
+- Is present exactly once
+- Is positioned at the end of setupAllTiles
+- Only updates cells with mismatched state (not all cells)
+- Is safely wrapped in try/catch
+- Has clear comments explaining its purpose
+
+This fix addresses the race condition where concurrent dispatches during
+async texture loading could leave the map with tiles but no building/avatar
+sprites, causing the "empty map on first load" bug reported by the user.
+
+NO BROWSER TESTING REQUIRED (as per instructions).

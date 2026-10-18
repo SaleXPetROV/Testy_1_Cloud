@@ -1,0 +1,1647 @@
+{
+ "version": 1,
+ "style": "AI-rendered cyber buildings v2 (art/sprites_v2)",
+ "canvas": [
+  320,
+  400
+ ],
+ "stages": {
+  "1": {
+   "levels": [
+    0,
+    3
+   ]
+  },
+  "2": {
+   "levels": [
+    4,
+    6
+   ]
+  },
+  "3": {
+   "levels": [
+    7,
+    10
+   ]
+  }
+ },
+ "anchor_note": "anchor = centre of the lot on the ground, as a fraction of the image (x, y); footprint_width = width of the lot diamond as a fraction of the image width; for a 1x2 lot placed vertically (2x1) mirror the image horizontally",
+ "types": {
+  "helios": {
+   "name_ru": "Солнечная станция",
+   "tier": 1,
+   "footprint": "1x1",
+   "aliases": [
+    "solar"
+   ],
+   "files": {
+    "1": "helios/stage1.webp",
+    "2": "helios/stage2.webp",
+    "3": "helios/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7589
+   ],
+   "footprint_width": 0.9395,
+   "files_meta": {
+    "1": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3875,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/helios.webp"
+    },
+    "2": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3875,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/helios.webp"
+    },
+    "3": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3875,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/helios.webp"
+    }
+   }
+  },
+  "nano_dc": {
+   "name_ru": "Нано-ЦОД",
+   "tier": 1,
+   "footprint": "1x1",
+   "aliases": [
+    "data_center"
+   ],
+   "files": {
+    "1": "nano_dc/stage1.webp",
+    "2": "nano_dc/stage2.webp",
+    "3": "nano_dc/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7589
+   ],
+   "footprint_width": 0.9395,
+   "files_meta": {
+    "1": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3422,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/nano_dc.webp"
+    },
+    "2": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3422,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/nano_dc.webp"
+    },
+    "3": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3422,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/nano_dc.webp"
+    }
+   }
+  },
+  "quartz_mine": {
+   "name_ru": "Шахта кварца",
+   "tier": 1,
+   "footprint": "1x1",
+   "aliases": [
+    "quartz"
+   ],
+   "files": {
+    "1": "quartz_mine/stage1.webp",
+    "2": "quartz_mine/stage2.webp",
+    "3": "quartz_mine/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7589
+   ],
+   "footprint_width": 0.9395,
+   "files_meta": {
+    "1": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3359,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/quartz_mine.webp"
+    },
+    "2": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3359,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/quartz_mine.webp"
+    },
+    "3": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3359,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/quartz_mine.webp"
+    }
+   }
+  },
+  "signal_tower": {
+   "name_ru": "Вышка трафика",
+   "tier": 1,
+   "footprint": "1x1",
+   "aliases": [
+    "traffic_tower"
+   ],
+   "files": {
+    "1": "signal_tower/stage1.webp",
+    "2": "signal_tower/stage2.webp",
+    "3": "signal_tower/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.8316
+   ],
+   "footprint_width": 0.6367,
+   "files_meta": {
+    "1": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.6367,
+     "anchor": [
+      0.5,
+      0.8316
+     ],
+     "top": 0.0141,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/signal_tower.webp"
+    },
+    "2": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.6367,
+     "anchor": [
+      0.5,
+      0.8316
+     ],
+     "top": 0.0141,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/signal_tower.webp"
+    },
+    "3": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.6367,
+     "anchor": [
+      0.5,
+      0.8316
+     ],
+     "top": 0.0141,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/signal_tower.webp"
+    }
+   }
+  },
+  "hydro_cooling": {
+   "name_ru": "Хладокомбинат",
+   "tier": 1,
+   "footprint": "1x1",
+   "aliases": [
+    "cold_storage"
+   ],
+   "files": {
+    "1": "hydro_cooling/stage1.webp",
+    "2": "hydro_cooling/stage2.webp",
+    "3": "hydro_cooling/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7589
+   ],
+   "footprint_width": 0.9395,
+   "files_meta": {
+    "1": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.325,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/hydro_cooling.webp"
+    },
+    "2": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.325,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/hydro_cooling.webp"
+    },
+    "3": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.325,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/hydro_cooling.webp"
+    }
+   }
+  },
+  "bio_farm": {
+   "name_ru": "Биоферма",
+   "tier": 1,
+   "footprint": "1x1",
+   "aliases": [],
+   "files": {
+    "1": "bio_farm/stage1.webp",
+    "2": "bio_farm/stage2.webp",
+    "3": "bio_farm/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7589
+   ],
+   "footprint_width": 0.9395,
+   "files_meta": {
+    "1": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.4047,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/bio_farm.webp"
+    },
+    "2": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.4047,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/bio_farm.webp"
+    },
+    "3": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.4047,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/bio_farm.webp"
+    }
+   }
+  },
+  "scrap_yard": {
+   "name_ru": "Свалка",
+   "tier": 1,
+   "footprint": "1x1",
+   "aliases": [],
+   "files": {
+    "1": "scrap_yard/stage1.webp",
+    "2": "scrap_yard/stage2.webp",
+    "3": "scrap_yard/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7589
+   ],
+   "footprint_width": 0.9395,
+   "files_meta": {
+    "1": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3375,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/scrap_yard.webp"
+    },
+    "2": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3375,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/scrap_yard.webp"
+    },
+    "3": {
+     "size": [
+      512,
+      640
+     ],
+     "footprint_width": 0.9395,
+     "anchor": [
+      0.5,
+      0.7589
+     ],
+     "top": 0.3375,
+     "long_axis": null,
+     "source": "sprites_v2/tier1/scrap_yard.webp"
+    }
+   }
+  },
+  "chips_factory": {
+   "name_ru": "Фабрика чипов",
+   "tier": 2,
+   "footprint": "2x2",
+   "aliases": [
+    "chip_factory"
+   ],
+   "files": {
+    "1": "chips_factory/stage1.webp",
+    "2": "chips_factory/stage2.webp",
+    "3": "chips_factory/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7023
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.2027,
+     "long_axis": "y",
+     "source": "chips_factory v3 skin"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.2027,
+     "long_axis": "y",
+     "source": "chips_factory v3 skin"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.2027,
+     "long_axis": "y",
+     "source": "chips_factory v3 skin"
+    }
+   },
+   "files_alt": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.2027,
+     "long_axis": "x",
+     "file": "chips_factory/stage1_alt.webp",
+     "source": "chips_factory v3 skin (mirrored)"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.2027,
+     "long_axis": "x",
+     "file": "chips_factory/stage2_alt.webp",
+     "source": "chips_factory v3 skin (mirrored)"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.2027,
+     "long_axis": "x",
+     "file": "chips_factory/stage3_alt.webp",
+     "source": "chips_factory v3 skin (mirrored)"
+    }
+   }
+  },
+  "nft_studio": {
+   "name_ru": "NFT-студия",
+   "tier": 2,
+   "footprint": "2x2",
+   "aliases": [],
+   "files": {
+    "1": "nft_studio/stage1.webp",
+    "2": "nft_studio/stage2.webp",
+    "3": "nft_studio/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7023
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1742,
+     "long_axis": "y",
+     "source": "nft_studio v3 skin"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1742,
+     "long_axis": "y",
+     "source": "nft_studio v3 skin"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1742,
+     "long_axis": "y",
+     "source": "nft_studio v3 skin"
+    }
+   },
+   "files_alt": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1742,
+     "long_axis": "x",
+     "file": "nft_studio/stage1_alt.webp",
+     "source": "nft_studio v3 skin (mirrored)"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1742,
+     "long_axis": "x",
+     "file": "nft_studio/stage2_alt.webp",
+     "source": "nft_studio v3 skin (mirrored)"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1742,
+     "long_axis": "x",
+     "file": "nft_studio/stage3_alt.webp",
+     "source": "nft_studio v3 skin (mirrored)"
+    }
+   }
+  },
+  "ai_lab": {
+   "name_ru": "ИИ-лаборатория",
+   "tier": 2,
+   "footprint": "2x2",
+   "aliases": [],
+   "files": {
+    "1": "ai_lab/stage1.webp",
+    "2": "ai_lab/stage2.webp",
+    "3": "ai_lab/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7023
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1404,
+     "long_axis": "y",
+     "source": "ai_lab v3 skin"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1404,
+     "long_axis": "y",
+     "source": "ai_lab v3 skin"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1404,
+     "long_axis": "y",
+     "source": "ai_lab v3 skin"
+    }
+   },
+   "files_alt": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1404,
+     "long_axis": "x",
+     "file": "ai_lab/stage1_alt.webp",
+     "source": "ai_lab v3 skin (mirrored)"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1404,
+     "long_axis": "x",
+     "file": "ai_lab/stage2_alt.webp",
+     "source": "ai_lab v3 skin (mirrored)"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.1404,
+     "long_axis": "x",
+     "file": "ai_lab/stage3_alt.webp",
+     "source": "ai_lab v3 skin (mirrored)"
+    }
+   }
+  },
+  "logistics_hub": {
+   "name_ru": "Логистический хаб",
+   "tier": 2,
+   "footprint": "2x2",
+   "aliases": [
+    "logistics"
+   ],
+   "files": {
+    "1": "logistics_hub/stage1.webp",
+    "2": "logistics_hub/stage2.webp",
+    "3": "logistics_hub/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7023
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.325,
+     "long_axis": "y",
+     "source": "logistics_hub v3 skin"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.325,
+     "long_axis": "y",
+     "source": "logistics_hub v3 skin"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.325,
+     "long_axis": "y",
+     "source": "logistics_hub v3 skin"
+    }
+   },
+   "files_alt": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.325,
+     "long_axis": "x",
+     "file": "logistics_hub/stage1_alt.webp",
+     "source": "logistics_hub v3 skin (mirrored)"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.325,
+     "long_axis": "x",
+     "file": "logistics_hub/stage2_alt.webp",
+     "source": "logistics_hub v3 skin (mirrored)"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.86,
+     "anchor": [
+      0.5,
+      0.685
+     ],
+     "top": 0.325,
+     "long_axis": "x",
+     "file": "logistics_hub/stage3_alt.webp",
+     "source": "logistics_hub v3 skin (mirrored)"
+    }
+   }
+  },
+  "cyber_cafe": {
+   "name_ru": "Кибер-кафе",
+   "tier": 2,
+   "footprint": "1x2",
+   "aliases": [],
+   "files": {
+    "1": "cyber_cafe/stage1.webp",
+    "2": "cyber_cafe/stage2.webp",
+    "3": "cyber_cafe/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7023
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2982,
+     "long_axis": "y",
+     "source": "sprites_v2/tier2_1x2/cyber_cafe.webp"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2982,
+     "long_axis": "y",
+     "source": "sprites_v2/tier2_1x2/cyber_cafe.webp"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2982,
+     "long_axis": "y",
+     "source": "sprites_v2/tier2_1x2/cyber_cafe.webp"
+    }
+   },
+   "files_alt": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2982,
+     "long_axis": "x",
+     "source": "sprites_v2/tier2_2x1/cyber_cafe.webp",
+     "file": "cyber_cafe/stage1_alt.webp"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2982,
+     "long_axis": "x",
+     "source": "sprites_v2/tier2_2x1/cyber_cafe.webp",
+     "file": "cyber_cafe/stage2_alt.webp"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2982,
+     "long_axis": "x",
+     "source": "sprites_v2/tier2_2x1/cyber_cafe.webp",
+     "file": "cyber_cafe/stage3_alt.webp"
+    }
+   }
+  },
+  "repair_shop": {
+   "name_ru": "Ремзона",
+   "tier": 2,
+   "footprint": "1x2",
+   "aliases": [
+    "repair_zone"
+   ],
+   "files": {
+    "1": "repair_shop/stage1.webp",
+    "2": "repair_shop/stage2.webp",
+    "3": "repair_shop/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7023
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.3542,
+     "long_axis": "y",
+     "source": "sprites_v2/tier2_1x2/repair_shop.webp"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.3542,
+     "long_axis": "y",
+     "source": "sprites_v2/tier2_1x2/repair_shop.webp"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.3542,
+     "long_axis": "y",
+     "source": "sprites_v2/tier2_1x2/repair_shop.webp"
+    }
+   },
+   "files_alt": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.3542,
+     "long_axis": "x",
+     "source": "sprites_v2/tier2_2x1/repair_shop.webp",
+     "file": "repair_shop/stage1_alt.webp"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.3542,
+     "long_axis": "x",
+     "source": "sprites_v2/tier2_2x1/repair_shop.webp",
+     "file": "repair_shop/stage2_alt.webp"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.3542,
+     "long_axis": "x",
+     "source": "sprites_v2/tier2_2x1/repair_shop.webp",
+     "file": "repair_shop/stage3_alt.webp"
+    }
+   }
+  },
+  "vr_club": {
+   "name_ru": "VR-клуб",
+   "tier": 2,
+   "footprint": "1x2",
+   "aliases": [],
+   "files": {
+    "1": "vr_club/stage1.webp",
+    "2": "vr_club/stage2.webp",
+    "3": "vr_club/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.7023
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2747,
+     "long_axis": "y",
+     "source": "sprites_v2/tier2_1x2/vr_club.webp"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2747,
+     "long_axis": "y",
+     "source": "sprites_v2/tier2_1x2/vr_club.webp"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2747,
+     "long_axis": "y",
+     "source": "sprites_v2/tier2_1x2/vr_club.webp"
+    }
+   },
+   "files_alt": {
+    "1": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2721,
+     "long_axis": "x",
+     "source": "sprites_v2/tier2_2x1/vr_club.webp",
+     "file": "vr_club/stage1_alt.webp"
+    },
+    "2": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2721,
+     "long_axis": "x",
+     "source": "sprites_v2/tier2_2x1/vr_club.webp",
+     "file": "vr_club/stage2_alt.webp"
+    },
+    "3": {
+     "size": [
+      768,
+      768
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.7023
+     ],
+     "top": 0.2721,
+     "long_axis": "x",
+     "source": "sprites_v2/tier2_2x1/vr_club.webp",
+     "file": "vr_club/stage3_alt.webp"
+    }
+   }
+  },
+  "validator": {
+   "name_ru": "Валидатор",
+   "tier": 3,
+   "footprint": "3x3",
+   "aliases": [],
+   "files": {
+    "1": "validator/stage1.webp",
+    "2": "validator/stage2.webp",
+    "3": "validator/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.6092
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.2135,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/validator.webp"
+    },
+    "2": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.2135,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/validator.webp"
+    },
+    "3": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.2135,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/validator.webp"
+    }
+   }
+  },
+  "gram_bank": {
+   "name_ru": "Банк Gram",
+   "tier": 3,
+   "footprint": "3x3",
+   "aliases": [
+    "bank"
+   ],
+   "files": {
+    "1": "gram_bank/stage1.webp",
+    "2": "gram_bank/stage2.webp",
+    "3": "gram_bank/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.6175
+   ],
+   "footprint_width": 0.9193,
+   "files_meta": {
+    "1": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9193,
+     "anchor": [
+      0.5,
+      0.6175
+     ],
+     "top": 0.0156,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/gram_bank.webp"
+    },
+    "2": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9193,
+     "anchor": [
+      0.5,
+      0.6175
+     ],
+     "top": 0.0156,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/gram_bank.webp"
+    },
+    "3": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9193,
+     "anchor": [
+      0.5,
+      0.6175
+     ],
+     "top": 0.0156,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/gram_bank.webp"
+    }
+   }
+  },
+  "dex": {
+   "name_ru": "DEX-биржа",
+   "tier": 3,
+   "footprint": "3x3",
+   "aliases": [],
+   "files": {
+    "1": "dex/stage1.webp",
+    "2": "dex/stage2.webp",
+    "3": "dex/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.6837
+   ],
+   "footprint_width": 0.7539,
+   "files_meta": {
+    "1": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.7539,
+     "anchor": [
+      0.5,
+      0.6837
+     ],
+     "top": 0.0156,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/dex.webp"
+    },
+    "2": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.7539,
+     "anchor": [
+      0.5,
+      0.6837
+     ],
+     "top": 0.0156,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/dex.webp"
+    },
+    "3": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.7539,
+     "anchor": [
+      0.5,
+      0.6837
+     ],
+     "top": 0.0156,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/dex.webp"
+    }
+   }
+  },
+  "casino": {
+   "name_ru": "Казино",
+   "tier": 3,
+   "footprint": "3x3",
+   "aliases": [],
+   "files": {
+    "1": "casino/stage1.webp",
+    "2": "casino/stage2.webp",
+    "3": "casino/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.6694
+   ],
+   "footprint_width": 0.7897,
+   "files_meta": {
+    "1": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.7897,
+     "anchor": [
+      0.5,
+      0.6694
+     ],
+     "top": 0.0156,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/casino.webp"
+    },
+    "2": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.7897,
+     "anchor": [
+      0.5,
+      0.6694
+     ],
+     "top": 0.0156,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/casino.webp"
+    },
+    "3": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.7897,
+     "anchor": [
+      0.5,
+      0.6694
+     ],
+     "top": 0.0156,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/casino.webp"
+    }
+   }
+  },
+  "arena": {
+   "name_ru": "Арена",
+   "tier": 3,
+   "footprint": "3x3",
+   "aliases": [],
+   "files": {
+    "1": "arena/stage1.webp",
+    "2": "arena/stage2.webp",
+    "3": "arena/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.6092
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.3134,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/arena.webp"
+    },
+    "2": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.3134,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/arena.webp"
+    },
+    "3": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.3134,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/arena.webp"
+    }
+   }
+  },
+  "incubator": {
+   "name_ru": "Инкубатор",
+   "tier": 3,
+   "footprint": "3x3",
+   "aliases": [],
+   "files": {
+    "1": "incubator/stage1.webp",
+    "2": "incubator/stage2.webp",
+    "3": "incubator/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.6092
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.2752,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/incubator.webp"
+    },
+    "2": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.2752,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/incubator.webp"
+    },
+    "3": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.2752,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/incubator.webp"
+    }
+   }
+  },
+  "bridge": {
+   "name_ru": "Мост",
+   "tier": 3,
+   "footprint": "3x3",
+   "aliases": [],
+   "files": {
+    "1": "bridge/stage1.webp",
+    "2": "bridge/stage2.webp",
+    "3": "bridge/stage3.webp"
+   },
+   "anchor": [
+    0.5,
+    0.6092
+   ],
+   "footprint_width": 0.9401,
+   "files_meta": {
+    "1": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.2387,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/bridge.webp"
+    },
+    "2": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.2387,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/bridge.webp"
+    },
+    "3": {
+     "size": [
+      1536,
+      1152
+     ],
+     "footprint_width": 0.9401,
+     "anchor": [
+      0.5,
+      0.6092
+     ],
+     "top": 0.2387,
+     "long_axis": null,
+     "source": "sprites_v2/tier3/bridge.webp"
+    }
+   }
+  }
+ },
+ "display_scale": {
+  "1x1": 0.92,
+  "1x2": 0.94,
+  "2x2": 0.8,
+  "3x3": 0.72
+ },
+ "display_note": "multi-tile lots: the building is drawn at display_scale of the lot width, centred, the rest of the lot is a plaza",
+ "note": "files_meta[stage]: size, footprint_width (fraction of width), anchor (lot centre on the ground), top (top of the building, for price tags), long_axis (\"y\" = long side to the lower-left / upper-right; mirror the image for a lot that is long along x). Admin fine-tuning is stored on the server (city_sprites).",
+ "note_alt": "files_alt[stage]: the second orientation of 1x2 buildings (long side along the other axis) — no runtime mirroring."
+}

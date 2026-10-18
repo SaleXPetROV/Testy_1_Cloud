@@ -1,0 +1,174 @@
+/* T3 Reward Banner — legendary shimmering / iridescent style */
+
+@keyframes t3RewardShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes t3RewardGlow {
+  0%, 100% { box-shadow: 0 8px 30px -8px rgba(255, 215, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12) inset; }
+  50% { box-shadow: 0 10px 40px -6px rgba(168, 85, 247, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.2) inset; }
+}
+
+@keyframes t3RewardSweep {
+  0% { transform: translateX(-120%); }
+  60% { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+
+@keyframes t3RewardIn {
+  0% { opacity: 0; transform: translateY(-12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.t3-reward-banner {
+  position: relative;
+  z-index: 19;
+  width: 100%;
+  padding: 8px 12px 0 12px;
+  pointer-events: none;
+  animation: t3RewardIn 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.t3-reward-banner__inner {
+  position: relative;
+  pointer-events: auto;
+  overflow: hidden;
+  border-radius: 14px;
+  padding: 12px 44px 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background:
+    linear-gradient(135deg,
+      #ffd86b 0%,
+      #ff6ec4 18%,
+      #a78bfa 38%,
+      #38bdf8 58%,
+      #34d399 78%,
+      #ffd86b 100%);
+  background-size: 300% 300%;
+  animation:
+    t3RewardShimmer 6s ease-in-out infinite,
+    t3RewardGlow 4s ease-in-out infinite;
+  color: #15151c;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(2px);
+}
+
+.t3-reward-banner__shimmer {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0) 100%);
+  transform: translateX(-120%);
+  animation: t3RewardSweep 3.4s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+.t3-reward-banner__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.t3-reward-banner__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #b45309;
+  font-weight: 800;
+  font-size: 16px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.t3-reward-banner__text {
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 700;
+  color: #15151c;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.01em;
+  word-break: break-word;
+}
+
+.t3-reward-banner__close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: rgba(21, 21, 28, 0.78);
+  color: #fff;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.t3-reward-banner__close:hover {
+  background: rgba(21, 21, 28, 0.95);
+  transform: scale(1.06);
+}
+
+.t3-reward-banner__close:active {
+  transform: scale(0.96);
+}
+
+.t3-reward-banner__close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Mobile optimisation */
+@media (max-width: 480px) {
+  .t3-reward-banner {
+    top: 8px;
+    width: calc(100vw - 16px);
+  }
+  .t3-reward-banner__inner {
+    padding: 10px 40px 10px 12px;
+    border-radius: 12px;
+  }
+  .t3-reward-banner__text {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  .t3-reward-banner__icon {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+  .t3-reward-banner__close {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .t3-reward-banner,
+  .t3-reward-banner__inner,
+  .t3-reward-banner__shimmer {
+    animation: none !important;
+  }
+}

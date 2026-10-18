@@ -1,0 +1,3 @@
+Resource pictures: Microsoft Fluent Emoji (3D), https://github.com/microsoft/fluentui-emoji
+Copyright (c) Microsoft Corporation. Licensed under the MIT License.
+File name = resource id (energy.webp, quartz.webp, ...).
